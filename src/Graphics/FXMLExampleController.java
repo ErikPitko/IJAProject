@@ -12,6 +12,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.shape.Rectangle;
 
 public class FXMLExampleController implements Initializable
 {
@@ -90,11 +91,24 @@ public class FXMLExampleController implements Initializable
         bl1.Draw(anch);
         bl2.Draw(anch);
         
-        anch.setOnMouseClicked(arg0->{
-        	if(arg0.getButton().equals(MouseButton.SECONDARY))
-				new BlockDialogContoller(arg0);
-		});
-        
+        anch.setOnMouseClicked(arg0 ->
+        {
+            if (!(arg0.getTarget() instanceof Rectangle))
+            {
+                if (arg0.getButton().equals(MouseButton.SECONDARY)) {
+                    new BlockDialogContoller(arg0);
+                }
+            }
+            else
+            {
+                if (arg0.getButton().equals(MouseButton.PRIMARY)) {
+                    if(arg0.getClickCount() == 2)
+                    {
+
+                    }
+                }
+            }
+        });
     }
 
 }

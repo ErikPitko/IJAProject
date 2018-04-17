@@ -93,13 +93,14 @@ public class FXMLExampleController implements Initializable
         
         anch.setOnMouseClicked(arg0 ->
         {
-            if (!(arg0.getTarget() instanceof Rectangle))
-            {
-                if (arg0.getButton().equals(MouseButton.SECONDARY)) {
-                    BlockDialogContoller.CreateBlockDialog(arg0);
-                }
-            }
-            else
+        	BlockDialogContoller.close();
+        	if (arg0.getButton().equals(MouseButton.SECONDARY)) {
+        		if (!(arg0.getTarget() instanceof Rectangle))
+        		{
+        			BlockDialogContoller.CreateBlockDialog(arg0);
+        		}
+        	}
+        	if ((arg0.getTarget() instanceof Rectangle))
             {
                 if (arg0.getButton().equals(MouseButton.PRIMARY)) {
                     if(arg0.getClickCount() == 2)

@@ -1,25 +1,31 @@
 package Graphics;
 
-import Base.Block;
-import Base.EBlock;
-import Base.Link;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
-import javafx.scene.input.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import Base.Block;
+import Base.EBlock;
+import Base.Link;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+
 public class FXMLExampleController implements Initializable
 {
+	private static Stage BlockDialog;
+	
     @FXML
     private AnchorPane anch;
     private void drawDShape(GraphicsContext gc) {
@@ -53,7 +59,30 @@ public class FXMLExampleController implements Initializable
             lineStartPosit = null;
         }
     }
-
+    
+    private void BlockDialog(MouseEvent event) {
+		Parent root;
+        try {
+        	if (BlockDialog != null)
+        		BlockDialog.close();
+            root = FXMLLoader.load(getClass().getClassLoader().getResource("Res/blockDialog.fxml"));
+            BlockDialog = new Stage();
+            BlockDialog.setTitle("");
+            BlockDialog.setScene(new Scene(root, 198, 132));
+            BlockDialog.setX(Panel.getStage().getX() + event.getX());
+            BlockDialog.setY(Panel.getStage().getY() + event.getY());
+            BlockDialog.show();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+	}
+    
+    public static void onClose() {
+    	if(BlockDialog != null)
+			BlockDialog.close();
+    }
+    
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
@@ -90,6 +119,17 @@ public class FXMLExampleController implements Initializable
         bl.Draw(anch);
         bl1.Draw(anch);
         bl2.Draw(anch);
+        
+        anch.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent arg0) {
+				if(arg0.getButton().equals(MouseButton.SECONDARY)) {
+					BlockDialog(arg0);
+				}
+			}
+        	
+		});
         
     }
 

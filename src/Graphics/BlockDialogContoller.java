@@ -7,13 +7,16 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Border;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class BlockDialogContoller implements Initializable{
 	
@@ -42,6 +45,8 @@ public class BlockDialogContoller implements Initializable{
             instance.setScene(new Scene(root, 198, 132));
             instance.setX(Panel.getStage().getX() + event.getX());
             instance.setY(Panel.getStage().getY() + event.getY());
+            instance.initStyle(StageStyle.UNDECORATED);
+            instance.setResizable(false);
             instance.show();
         }
         catch (IOException e) {
@@ -56,9 +61,23 @@ public class BlockDialogContoller implements Initializable{
 		}
 	}
 
+	private void InitButt(Button butt, String path)
+	{
+		ImageView add = new ImageView(new Image(getClass().getResourceAsStream(path)));
+		add.setFitHeight(64);
+		add.setFitWidth(64);
+		butt.setGraphic(add);
+		butt.setPadding(Insets.EMPTY);
+	}
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		ADD.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/Res/ADD.png"))));
+		InitButt(ADD,"/Res/ADD.png");
+		InitButt(SUB,"/Res/SUB.png");
+		InitButt(MUL,"/Res/MUL.png");
+		InitButt(DIV,"/Res/DIV.png");
+		InitButt(IN,"/Res/IN.png");
+		InitButt(OUT,"/Res/DISP.png");
 	}
 	
 

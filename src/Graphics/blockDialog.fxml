@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -19,12 +22,12 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button fx:id="ADD" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" text="Button" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-            <Button fx:id="SUB" alignment="CENTER_RIGHT" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" text="Button" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-            <Button fx:id="MUL" alignment="CENTER_RIGHT" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" text="Button" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-            <Button fx:id="DIV" alignment="CENTER_RIGHT" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" text="Button" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-            <Button fx:id="IN" alignment="CENTER_RIGHT" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" text="Button" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-            <Button fx:id="OUT" alignment="CENTER_RIGHT" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" text="Button" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+            <Button fx:id="ADD" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" depthTest="DISABLE" mnemonicParsing="false" text="Button" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
+            <Button fx:id="SUB" alignment="CENTER_RIGHT" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" text="Button" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
+            <Button fx:id="MUL" alignment="CENTER_RIGHT" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" text="Button" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
+            <Button fx:id="DIV" alignment="CENTER_RIGHT" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" text="Button" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
+            <Button fx:id="IN" alignment="CENTER_RIGHT" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" text="Button" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
+            <Button fx:id="OUT" alignment="CENTER_RIGHT" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" text="Button" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
          </children>
       </GridPane>
    </children>

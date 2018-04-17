@@ -32,18 +32,16 @@ public class BlockDialogContoller implements Initializable{
 	@FXML
 	private Button OUT;
 
-	public BlockDialogContoller(MouseEvent event) {
-		super();
+	public static void CreateBlockDialog(MouseEvent event) {
 		close();
 		Parent root;
         try {
-            root = FXMLLoader.load(getClass().getClassLoader().getResource("Res/blockDialog.fxml"));
+            root = FXMLLoader.load(BlockDialogContoller.class.getClassLoader().getResource("Graphics/blockDialog.fxml"));
             instance = new Stage();
             instance.setTitle("");
             instance.setScene(new Scene(root, 198, 132));
             instance.setX(Panel.getStage().getX() + event.getX());
             instance.setY(Panel.getStage().getY() + event.getY());
-            
             instance.show();
         }
         catch (IOException e) {
@@ -61,7 +59,6 @@ public class BlockDialogContoller implements Initializable{
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		ADD.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/Res/ADD.png"))));
-		System.out.println("PICA");
 	}
 	
 

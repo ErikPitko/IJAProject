@@ -96,7 +96,7 @@ public class FXMLExampleController implements Initializable
             if (!(arg0.getTarget() instanceof Rectangle))
             {
                 if (arg0.getButton().equals(MouseButton.SECONDARY)) {
-                    new BlockDialogContoller(arg0);
+                    BlockDialogContoller.CreateBlockDialog(arg0);
                 }
             }
             else

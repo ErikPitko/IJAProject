@@ -53,6 +53,16 @@ public class Rect extends Point2D
     }
     //endregion
 
+    public static Rect ZERO = new Rect(0,0,0,0);
+
+    public Rect(Rect rect)
+    {
+        X = rect.X;
+        Y= rect.Y;
+        _sizeY = rect._sizeX;
+        _sizeX = rect._sizeX;
+        CalcInternalVariables();
+    }
 
     public Rect(Point2D position, Point2D size)
     {

@@ -1,31 +1,20 @@
 package Graphics;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import Base.Block;
 import Base.EBlock;
 import Base.Link;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 public class FXMLExampleController implements Initializable
 {
-	private static Stage BlockDialog;
-	
     @FXML
     private AnchorPane anch;
     private void drawDShape(GraphicsContext gc) {
@@ -60,27 +49,8 @@ public class FXMLExampleController implements Initializable
         }
     }
     
-    private void BlockDialog(MouseEvent event) {
-		Parent root;
-        try {
-        	if (BlockDialog != null)
-        		BlockDialog.close();
-            root = FXMLLoader.load(getClass().getClassLoader().getResource("Res/blockDialog.fxml"));
-            BlockDialog = new Stage();
-            BlockDialog.setTitle("");
-            BlockDialog.setScene(new Scene(root, 198, 132));
-            BlockDialog.setX(Panel.getStage().getX() + event.getX());
-            BlockDialog.setY(Panel.getStage().getY() + event.getY());
-            BlockDialog.show();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-	}
-    
     public static void onClose() {
-    	if(BlockDialog != null)
-			BlockDialog.close();
+    	BlockDialogContoller.close();
     }
     
     @Override
@@ -120,15 +90,9 @@ public class FXMLExampleController implements Initializable
         bl1.Draw(anch);
         bl2.Draw(anch);
         
-        anch.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent arg0) {
-				if(arg0.getButton().equals(MouseButton.SECONDARY)) {
-					BlockDialog(arg0);
-				}
-			}
-        	
+        anch.setOnMouseClicked(arg0->{
+        	if(arg0.getButton().equals(MouseButton.SECONDARY))
+				new BlockDialogContoller(arg0);
 		});
         
     }

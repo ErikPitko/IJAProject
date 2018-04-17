@@ -2,7 +2,9 @@ package Base;
 
 import Graphics.DrawableObject;
 import Graphics.LineMesh;
+import javafx.scene.Node;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.AnchorPane;
 
 public class Link implements DrawableObject {
 	private LineMesh mesh;
@@ -45,7 +47,7 @@ public class Link implements DrawableObject {
 	}
 
 	@Override
-	public void Draw(GraphicsContext gc) {
+	public void Draw(AnchorPane pane) {
 		
 	}
 

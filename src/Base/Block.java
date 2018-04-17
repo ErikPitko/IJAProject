@@ -4,21 +4,16 @@ import java.util.ArrayList;
 
 import Graphics.DrawableObject;
 import Graphics.Rect;
-import javafx.scene.canvas.GraphicsContext;
-
-
-
-interface MyCallBack
-{
-    double MathFunction(double a, double b);
-}
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 public class Block implements DrawableObject
 {
     private EBlock _eBlock;
     private Rect _rect;
     private ArrayList<Port> inPorts = new ArrayList<Port>();
-	private ArrayList<Port> outPorts = new ArrayList<Port>();
+	private Port _outPort;
 	private double value = 0;
 	private boolean calculated = false;
 
@@ -26,6 +21,7 @@ public class Block implements DrawableObject
 		super();
 		this._eBlock = eBlock;
 		this._rect = rect;
+		_outPort = new Port(new Rect(_rect.XMax()-(Port.PORT_SIZE+Port.PORT_SIZE/2),_rect.Y+_rect.Height()/2-Port.PORT_SIZE/2,Port.PORT_SIZE,Port.PORT_SIZE),this,Color.RED);
 	}
 
 	public Block(EBlock eBlock, Rect rect, double value) {
@@ -35,9 +31,30 @@ public class Block implements DrawableObject
 		this.value = value;
 //		TODO newport
 		Rect newport = new Rect(0, 0, 0, 0);
-		outPorts.add(new Port(newport, this));
+		_outPort = new Port(new Rect(_rect.XMax()-(Port.PORT_SIZE+Port.PORT_SIZE/2),_rect.Y+_rect.Height()/2-Port.PORT_SIZE/2,Port.PORT_SIZE,Port.PORT_SIZE),this,Color.RED);
 	}
-	
+
+	private void CalculatePortsToMiddle() {
+		boolean resized = RecalculateHeights();
+		double step = _rect.Height() / inPorts.size();
+		double div = step / 2;
+		for (int i = 0; i < inPorts.size(); i++)
+		{
+			inPorts.get(i).Rect.Y = (int) (_rect.Y + (i + 1) * step - div- Port.PORT_SIZE / 2);
+		}
+	}
+
+	private boolean RecalculateHeights()
+	{
+		if(inPorts.size()*Port.PORT_SIZE >= _rect.Height()-10)
+		{
+			_rect.SetSizeY(inPorts.size()*Port.PORT_SIZE + inPorts.size()*15);
+			_outPort.Rect.Y = _rect.Y+_rect.Height()/2-Port.PORT_SIZE/2;
+			return true;
+		}
+		return false;
+	}
+
 //	 public Block(EBlock eBlock, Rect rect, int numOfInput)
 //	    {
 //	        if(numOfInput < 2)
@@ -79,15 +96,9 @@ public class Block implements DrawableObject
 	
 	public void genInPort() {
 //		TODO newport
-		Rect newport = new Rect(0,0,0,0);
+		Rect newport = new Rect(_rect.X+5,_rect.Y+5 + 15*inPorts.size(),10,10);
 		this.inPorts.add(new Port(newport, this));
-	}
-
-	
-	public void genOutPort() {
-//		TODO newport
-		Rect newport = new Rect(0,0,0,0);
-		this.outPorts.add(new Port(newport, this));
+		CalculatePortsToMiddle();
 	}
 
 	
@@ -130,21 +141,17 @@ public class Block implements DrawableObject
 		if(block == null)
 			return;
 		block.calculated = false;
-		for (Port port:block.getOutPorts()) {
-			Link link = port.getLink();
-			if(link == null)
-				return;
-			unsetCalculated(link.getOutPort().GetBlock());
-		}
+		Link link = block._outPort.getLink();
+		if(link== null)
+			return;
+		unsetCalculated(link.getOutPort().GetBlock());
 	}
 
 	public ArrayList<Port> getInPorts() {
 		return inPorts;
 	}
 
-	public ArrayList<Port> getOutPorts() {
-		return outPorts;
-	}
+	public Port GetOutPort(){ return _outPort; }
 
 	public double getValue() {
 		return value;
@@ -160,8 +167,20 @@ public class Block implements DrawableObject
 	}
 
     @Override
-    public void Draw(GraphicsContext gc)
+    public void Draw(AnchorPane pane)
     {
-
+		Rectangle r = new Rectangle();
+		r.setX(_rect.X);
+		r.setY(_rect.Y);
+		r.setWidth(_rect.Width());
+		r.setHeight(_rect.Height());
+		r.setFill(new Color(0.8,0.8,0.8,1));
+		r.setStroke(Color.BLACK);
+		pane.getChildren().add(r);
+		for (Port p: inPorts)
+		{
+			p.Draw(pane);
+		}
+		_outPort.Draw(pane);
     }
 }

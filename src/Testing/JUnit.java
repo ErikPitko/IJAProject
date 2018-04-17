@@ -30,24 +30,22 @@ public class JUnit
         Link[] links;
 		blocks = new ArrayList<Block>();
 		blocks.add(new Block(EBlock.IN, new Rect(0, 0, 0, 0), 5));
-		blocks.get(0).genOutPort();
 		blocks.add(new Block(EBlock.IN, new Rect(0, 0, 0, 0), 2));
-		blocks.get(1).genOutPort();
 		
 		links = new Link[] {new Link(), new Link()};
-		links[0].setInPort(blocks.get(0).getOutPorts().get(0)); 
-		links[1].setInPort(blocks.get(1).getOutPorts().get(0));
+		links[0].setInPort(blocks.get(0).GetOutPort());
+		links[1].setInPort(blocks.get(1).GetOutPort());
 		createBlock(EBlock.ADD, links);
 		
 		links = new Link[] {new Link(), new Link()};
-		links[0].setInPort(blocks.get(0).getOutPorts().get(0));
-		links[1].setInPort(blocks.get(2).getOutPorts().get(0));
+		links[0].setInPort(blocks.get(0).GetOutPort());
+		links[1].setInPort(blocks.get(2).GetOutPort());
 		createBlock(EBlock.ADD, links);
 		
 		links = new Link[] {new Link(), new Link(), new Link()};
-		links[0].setInPort(blocks.get(blocks.size() - 1).getOutPorts().get(0));
-		links[1].setInPort(blocks.get(blocks.size() - 2).getOutPorts().get(0));
-		links[2].setInPort(blocks.get(1).getOutPorts().get(0));
+		links[0].setInPort(blocks.get(blocks.size() - 1).GetOutPort());
+		links[1].setInPort(blocks.get(blocks.size() - 2).GetOutPort());
+		links[2].setInPort(blocks.get(1).GetOutPort());
 		createBlock(EBlock.ADD, links);
     }
     
@@ -132,20 +130,19 @@ public class JUnit
 				links = new Link[] {new Link(), new Link()};
 				createReverseBlock(EBlock.ADD, links);
 				Link previousLink = blocks.get(j/2).getInPorts().get(((j-1)%2==0) ? 0:1).getLink();
-				previousLink.setInPort(blocks.get(j).getOutPorts().get(0));
+				previousLink.setInPort(blocks.get(j).GetOutPort());
 				blocks.get(j/2).getInPorts().get(((j-1)%2==0) ? 0:1).setLink(previousLink);
-				blocks.get(j).getOutPorts().get(0).setLink(previousLink);
+				blocks.get(j).GetOutPort().setLink(previousLink);
 			}
 		}
 		for (int j = (int) Math.pow(2, 9); j < Math.pow(2, 10); ++j) {
 			temp = rand.nextDouble() * 50 - 25;
 			blocks.add(new Block(EBlock.IN, new Rect(0, 0, 0, 0), temp));
 			expectedValue += temp;
-			blocks.get(0).genOutPort();
 			Link previousLink = blocks.get(j/2).getInPorts().get(((j-1)%2==0) ? 0:1).getLink();
-			previousLink.setInPort(blocks.get(j).getOutPorts().get(0));
+			previousLink.setInPort(blocks.get(j).GetOutPort());
 			blocks.get(j/2).getInPorts().get(((j-1)%2==0) ? 0:1).setLink(previousLink);
-			blocks.get(j).getOutPorts().get(0).setLink(previousLink);
+			blocks.get(j).GetOutPort().setLink(previousLink);
 		}
 		Block.compute(blocks.get(1));
 		assertEquals(expectedValue, blocks.get(1).getValue(), 0.000000001);
@@ -209,7 +206,6 @@ public class JUnit
 			links[i].setOutPort(inPort);
 			inPort.setLink(links[i]);
 		}
-		thisBlock.genOutPort();
 	}
 	
 	private void createReverseBlock(EBlock type, Link[] links){
@@ -222,6 +218,5 @@ public class JUnit
 			links[i].setOutPort(inPort);
 			inPort.setLink(links[i]);
 		}
-		thisBlock.genOutPort();
 	}
 }

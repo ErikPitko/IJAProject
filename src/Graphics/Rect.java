@@ -42,6 +42,10 @@ public class Rect extends Point2D
         return _center;
     }
 
+    public void SetSizeX(int x) {_sizeX = x;}
+
+    public void SetSizeY(int y) {_sizeY = y;}
+
     public int Width()
     {
         return _sizeX;

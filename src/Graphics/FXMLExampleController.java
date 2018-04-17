@@ -18,6 +18,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -120,17 +121,24 @@ public class FXMLExampleController implements Initializable
         bl1.Draw(anch);
         bl2.Draw(anch);
         
-        anch.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        anch.setOnMouseClicked(arg0 ->
+        {
+            if (!(arg0.getTarget() instanceof Rectangle))
+            {
+                if (arg0.getButton().equals(MouseButton.SECONDARY)) {
+                    BlockDialog(arg0);
+                }
+            }
+            else
+            {
+                if (arg0.getButton().equals(MouseButton.PRIMARY)) {
+                    if(arg0.getClickCount() == 2)
+                    {
 
-			@Override
-			public void handle(MouseEvent arg0) {
-				if(arg0.getButton().equals(MouseButton.SECONDARY)) {
-					BlockDialog(arg0);
-				}
-			}
-        	
-		});
-        
+                    }
+                }
+            }
+        });
     }
 
 }

@@ -2,6 +2,7 @@ package Graphics;
 
 import Base.Block;
 import Base.EBlock;
+import Base.Link;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -54,7 +55,8 @@ public class FXMLExampleController implements Initializable
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void initialize(URL location, ResourceBundle resources)
+    {
         Block bl = new Block(EBlock.ADD,new Rect(100,100,200,200));
         bl.genInPort();
         bl.genInPort();
@@ -62,31 +64,33 @@ public class FXMLExampleController implements Initializable
         bl.genInPort();
         bl.genInPort();
         bl.genInPort();
+        Block bl1 = new Block(EBlock.ADD,new Rect(350,350,100,100));
+        bl1.genInPort();
+        bl1.genInPort();
+        bl1.genInPort();
+        Link l = new Link();
+        l.setInPort(bl.GetOutPort());
+        l.setOutPort(bl1.getInPorts().get(0));
+        bl.GetOutPort().setLink(l);
+        bl1.getInPorts().get(0).setLink(l);
+        Block bl2 = new Block(EBlock.ADD,new Rect(500,100,100,100));
+        bl2.genInPort();
+        bl2.genInPort();
+        bl2.genInPort();
+        Link ll = new Link();
+        ll.setInPort(bl1.GetOutPort());
+        ll.setOutPort(bl2.getInPorts().get(0));
+        bl1.GetOutPort().setLink(ll);
+        bl2.getInPorts().get(0).setLink(ll);
+        Link lll = new Link();
+        lll.setInPort(bl.GetOutPort());
+        lll.setOutPort(bl2.getInPorts().get(1));
+        bl.GetOutPort().setLink(lll);
+        bl2.getInPorts().get(1).setLink(lll);
         bl.Draw(anch);
-
-        Block bl1 = new Block(EBlock.ADD,new Rect(300,300,100,100));
-        bl1.genInPort();
-        bl1.genInPort();
-        bl1.genInPort();
         bl1.Draw(anch);
-        /*canvas.setOnMouseClicked(event -> {
-            coordinates.setText("X: "+event.getX()+" Y: "+event.getY());
-            DrawLine(gc,event);
-        });
-        canvas.setOnMousePressed((event -> {
-            mouseDrag = new Point2D((int) event.getX(),(int)event.getY());
-            System.out.println(mouseDrag);
-            System.out.println("DRAG");
-        }));
-        canvas.setOnMouseDragged((event -> {
-
-        }));
-        canvas.setOnMouseReleased(event -> {
-            mouseDrag = mouseDrag.add(new Point2D((int) event.getX(), (int) event.getY()));
-            //moveCanvas(mouseStartDrag.X, mouseStartDrag.Y);
-            System.out.println(mouseDrag);
-            System.out.println("DROP");
-        });*/
+        bl2.Draw(anch);
+        
     }
 
 }

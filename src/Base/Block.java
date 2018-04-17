@@ -180,6 +180,11 @@ public class Block implements DrawableObject
 		for (Port p: inPorts)
 		{
 			p.Draw(pane);
+			System.out.println("DRAAW");
+			if(p.GetLink()!= null){
+				p.GetLink().Draw(pane);
+				System.out.println("DRAW");
+			}
 		}
 		_outPort.Draw(pane);
     }

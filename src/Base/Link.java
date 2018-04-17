@@ -5,6 +5,8 @@ import Graphics.LineMesh;
 import javafx.scene.Node;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 
 public class Link implements DrawableObject {
 	private LineMesh mesh;
@@ -18,7 +20,13 @@ public class Link implements DrawableObject {
 	public Link() {
 		super();
 	}
-	
+
+	public Link(Port inPort, Port outPort) {
+		super();
+		this.inPort = inPort;
+		this.outPort = outPort;
+	}
+
 	public Link(Port inPort, Port outPort, LineMesh mesh) {
 		super();
 		this.mesh = mesh;
@@ -47,8 +55,17 @@ public class Link implements DrawableObject {
 	}
 
 	@Override
-	public void Draw(AnchorPane pane) {
-		
+	public void Draw(AnchorPane pane)
+	{
+		if(inPort == null||outPort== null)
+			return;
+		Line l = new Line();
+		l.setStartX(inPort.Rect.Center().X);
+		l.setStartY(inPort.Rect.Center().Y);
+		l.setEndX(outPort.Rect.Center().X);
+		l.setEndY(outPort.Rect.Center().Y);
+		l.setFill(Color.BLACK);
+		pane.getChildren().add(l);
 	}
 
 }

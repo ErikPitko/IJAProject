@@ -8,7 +8,6 @@ public class Rect extends Point2D
     private int _xMax;
     private int _yMin;
     private int _yMax;
-    private Point2D _center;
     //region Getters
 
     public int XMin() {
@@ -39,7 +38,7 @@ public class Rect extends Point2D
 
     public Point2D Center()
     {
-        return _center;
+        return new Point2D(X+(_sizeX/2),Y+(_sizeY/2));
     }
 
     public void SetSizeX(int x) {_sizeX = x;}
@@ -110,7 +109,6 @@ public class Rect extends Point2D
         _xMax = X+_sizeX;
         _yMin = Y;
         _yMax = Y+_sizeY;
-        _center = new Point2D(X+(_sizeX/2),Y+(_sizeY/2));
     }
 
     public boolean Contains(Point2D point)

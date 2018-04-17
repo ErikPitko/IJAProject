@@ -4,49 +4,49 @@ import Graphics.DrawableObject;
 import Graphics.LineMesh;
 import javafx.scene.canvas.GraphicsContext;
 
-public class Link implements DrawableObject
-{
-    private Port _input;
-    private Port _output;
-    private double _value;
-    private LineMesh mesh;
+public class Link implements DrawableObject {
+	private LineMesh mesh;
+	private Port inPort;
+	private Port outPort;
+	
+	public LineMesh getLinkMesh() {
+		return mesh;
+	}
 
-    public void SetValue(double value) {
-        _value = value;
-    }
+	public Link() {
+		super();
+	}
+	
+	public Link(Port inPort, Port outPort, LineMesh mesh) {
+		super();
+		this.mesh = mesh;
+		this.inPort = inPort;
+		this.outPort = outPort;
+	}
+	
+	public Port getInPort() {
+		return inPort;
+	}
 
-    public double GetValue() {
-        return _value;
-    }
+	public void setInPort(Port inPort) {
+		if (this.outPort != null)
+			Block.unsetCalculated(outPort.GetBlock());
+		this.inPort = inPort;
+	}
 
-    public void SetInput(Port input) {
-        this._input = input;
-        _value = _input.GetValue();
-        _input.AddLink(this);
-    }
+	public Port getOutPort() {
+		return outPort;
+	}
 
-    public void SetOutput(Port output) {
-        this._output = output;
-        _output.AddLink(this);
-        _output.SetValue(_value);
-        _output.IsValueSet = true;
-    }
+	public void setOutPort(Port outPort) {
+		if (this.outPort != null)
+			Block.unsetCalculated(outPort.GetBlock());
+		this.outPort = outPort;
+	}
 
-    public Port GetOutput() {
-        return _output;
-    }
+	@Override
+	public void Draw(GraphicsContext gc) {
+		
+	}
 
-    public Link(Port input, Port output)
-    {
-        SetInput(input);
-        SetOutput(output);
-        mesh = new LineMesh(input.Rect.Center(),output.Rect.Center());
-    }
-
-
-    @Override
-    public void Draw(GraphicsContext gc)
-    {
-
-    }
 }

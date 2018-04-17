@@ -1,73 +1,165 @@
 package Testing;
 
-import Base.Block;
-import Base.EBlock;
-import Base.Link;
-import Graphics.Point2D;
-import Graphics.Rect;
+import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import static junit.framework.TestCase.assertEquals;
+import Base.Block;
+import Base.EBlock;
+import Base.Link;
+import Base.Port;
+import Graphics.Point2D;
+import Graphics.Rect;
 
 public class JUnit
 {
     public Rect myRect;
     public Point2D point;
-    public Block block1;
-    public Block block2;
-    public Block block3;
+    private List<Block> blocks;
+    
     @Before
     public void prepare() {
-        block1 = new Block(EBlock.SUM,new Rect(10,10,10,10),10,20,30,40);
-        block2 = new Block(EBlock.SUM,new Rect(10,10,10,10));
-        block3 = new Block(EBlock.MUL,new Rect(0,0,0,0),3);
         point = new Point2D(5,5);
         myRect = new Rect(10,10,10,10);
+        
+        Link[] links;
+		blocks = new ArrayList<Block>();
+		blocks.add(new Block(EBlock.IN, new Rect(0, 0, 0, 0), 5));
+		blocks.get(0).genOutPort();
+		blocks.add(new Block(EBlock.IN, new Rect(0, 0, 0, 0), 2));
+		blocks.get(1).genOutPort();
+		
+		links = new Link[] {new Link(), new Link()};
+		links[0].setInPort(blocks.get(0).getOutPorts().get(0)); 
+		links[1].setInPort(blocks.get(1).getOutPorts().get(0));
+		createBlock(EBlock.ADD, links);
+		
+		links = new Link[] {new Link(), new Link()};
+		links[0].setInPort(blocks.get(0).getOutPorts().get(0));
+		links[1].setInPort(blocks.get(2).getOutPorts().get(0));
+		createBlock(EBlock.ADD, links);
+		
+		links = new Link[] {new Link(), new Link(), new Link()};
+		links[0].setInPort(blocks.get(blocks.size() - 1).getOutPorts().get(0));
+		links[1].setInPort(blocks.get(blocks.size() - 2).getOutPorts().get(0));
+		links[2].setInPort(blocks.get(1).getOutPorts().get(0));
+		createBlock(EBlock.ADD, links);
     }
+    
     @Test
-    public void BlockTest()
-    {
-        assertEquals("Block1 input port0 = 10",(double)10,block1.GetInputPort(0).GetValue());
-        assertEquals("Block1 input port1 = 20",(double)20,block1.GetInputPort(1).GetValue());
-        assertEquals("Block1 input port2 = 30",(double)30,block1.GetInputPort(2).GetValue());
-        assertEquals("Block1 input port3 = 40",(double)40,block1.GetInputPort(3).GetValue());
-    }
-    @Test
-    public void AdvancedBlockTesting()
-    {
-        // 10 20 30 40 >> Block --> 100 5 >> Block --> 105 2 3 >> Block
-        //                 SUM                SUM                  MUL
-        //                 100                105                  630
-        new Link(block1.Output(),block2.GetEmptyInputPort());
-        assertEquals("Block1 output port = 0",(double)0,block1.Output().GetValue());
-        assertEquals("Block2 input port0 = 100",(double)0,block2.GetInputPort(0).GetValue());
-        block1.Calculate();
-        assertEquals("Block1 output port = 100",(double)100,block1.Output().GetValue());
-        assertEquals("Block2 input port0 = 100",(double)100,block2.GetInputPort(0).GetValue());
-        new Link(block2.Output(),block3.GetEmptyInputPort());
-        block3.SetPortValue(3);
-        block3.SetPortValue(2);
-        block2.SetPortValue(5);
-        assertEquals("Block2 output port = 0",(double)0,block2.Output().GetValue());
-        block2.Calculate();
-        assertEquals("Block2 output port = 105",(double)105,block2.Output().GetValue());
-        assertEquals("Block3 input port0 = 105",(double)105,block3.GetInputPort(0).GetValue());
-        assertEquals("Block3 output port = 0",(double)0,block3.Output().GetValue());
-        block3.Calculate();
-        assertEquals("Block1 output port = 100",(double)100,block1.Output().GetValue());
-        assertEquals("Block2 output port = 105",(double)105,block2.Output().GetValue());
-        assertEquals("Block3 output port = 630",(double)630,block3.Output().GetValue());
-    }
-    @Test
+	public void Simple() {
+		Block.compute(blocks.get(2));
+		assertEquals(7, blocks.get(2).getValue(), 0);
+
+		blocks.get(2).setType(EBlock.SUB);
+		Block.compute(blocks.get(2));
+		assertEquals(3, blocks.get(2).getValue(), 0);
+		
+		blocks.get(2).setType(EBlock.MUL);
+		Block.compute(blocks.get(2));
+		assertEquals(10, blocks.get(2).getValue(), 0);
+		
+		blocks.get(2).setType(EBlock.DIV);
+		Block.compute(blocks.get(2));
+		assertEquals(5.0/2.0, blocks.get(2).getValue(), 0);
+	}
+	
+	@Test
+	public void TwoStageBlocks() {
+		Block thisBlock = blocks.get(3);
+		Block.compute(thisBlock);
+		assertEquals(5+7, thisBlock.getValue(), 0);
+		
+		thisBlock.setType(EBlock.SUB);
+		Block.compute(thisBlock);
+		assertEquals(5-7, thisBlock.getValue(), 0);
+
+		thisBlock.setType(EBlock.MUL);
+		Block.compute(thisBlock);
+		assertEquals(5*7, thisBlock.getValue(), 0);
+		
+		thisBlock.setType(EBlock.DIV);
+		Block.compute(thisBlock);
+		assertEquals(5.0/7.0, thisBlock.getValue(), 0);
+		
+		
+//		Zacyklenie
+//		blocks.get(2).genInPort();
+//		blocks.get(2).getInPorts().get(2).setLink(new Link(blocks.get(blocks.size() - 1).getOutPorts().get(0)));
+//		Block.compute(blocks.get(blocks.size() - 1));
+		
+		
+	}
+
+	@Test
+	public void ThreeStageBlocks() {
+		Block thisBlock = blocks.get(4);
+		Block.compute(thisBlock);
+		assertEquals(12+7+2, thisBlock.getValue(), 0);
+		
+		thisBlock.setType(EBlock.SUB);
+		Block.compute(thisBlock);
+		assertEquals(12-7-2, thisBlock.getValue(), 0);
+		
+		thisBlock.setType(EBlock.MUL);
+		Block.compute(thisBlock);
+		assertEquals(12 * 7 * 2, thisBlock.getValue(), 0);
+		
+		thisBlock.setType(EBlock.DIV);
+		Block.compute(thisBlock);
+		assertEquals((5.0+5.0+2.0)/(7.0)/2.0, thisBlock.getValue(), 0);
+		
+	}
+	
+	@Test
+	public void elevenStageBlocks() {
+		Random rand = new Random();
+		double temp;
+		double expectedValue = 0;
+		Link[] links;
+		blocks = new ArrayList<Block>();
+
+		links = new Link[] {new Link(), new Link()};
+		createReverseBlock(EBlock.ADD, links);
+		
+		for (int i = 1; i < 10; ++i) {
+			for (int j = (int) Math.pow(2, i-1); j < Math.pow(2, i); ++j) {
+				links = new Link[] {new Link(), new Link()};
+				createReverseBlock(EBlock.ADD, links);
+				Link previousLink = blocks.get(j/2).getInPorts().get(((j-1)%2==0) ? 0:1).getLink();
+				previousLink.setInPort(blocks.get(j).getOutPorts().get(0));
+				blocks.get(j/2).getInPorts().get(((j-1)%2==0) ? 0:1).setLink(previousLink);
+				blocks.get(j).getOutPorts().get(0).setLink(previousLink);
+			}
+		}
+		for (int j = (int) Math.pow(2, 9); j < Math.pow(2, 10); ++j) {
+			temp = rand.nextDouble() * 50 - 25;
+			blocks.add(new Block(EBlock.IN, new Rect(0, 0, 0, 0), temp));
+			expectedValue += temp;
+			blocks.get(0).genOutPort();
+			Link previousLink = blocks.get(j/2).getInPorts().get(((j-1)%2==0) ? 0:1).getLink();
+			previousLink.setInPort(blocks.get(j).getOutPorts().get(0));
+			blocks.get(j/2).getInPorts().get(((j-1)%2==0) ? 0:1).setLink(previousLink);
+			blocks.get(j).getOutPorts().get(0).setLink(previousLink);
+		}
+		Block.compute(blocks.get(1));
+		assertEquals(expectedValue, blocks.get(1).getValue(), 0.000000001);
+	}
+    
+	@Test
     public void PointTest()
     {
         assertEquals("Does point X = 5",5,point.X);
         assertEquals("Does point Y = 5",5,point.Y);
-        assertEquals("Does point distance equal to 4",4f,(float)Point2D.Distance(point,new Point2D(5,9)));
-        assertEquals("Does point distance equal to 4",4f,(float)Point2D.Distance(point,new Point2D(9,5)));
-        assertEquals("Does point distance equal to sqrt(2)", Math.sqrt(8),Point2D.Distance(point,new Point2D(7,7)));
-        assertEquals("Does point distance equal to sqrt(50)", Math.sqrt(50),Point2D.Distance(point,new Point2D(0,0)));
+        assertEquals("Does point distance equal to 4",4.0,Point2D.Distance(point,new Point2D(5,9)), 0.000000001);
+        assertEquals("Does point distance equal to 4",4.0,Point2D.Distance(point,new Point2D(9,5)), 0.000000001);
+        assertEquals("Does point distance equal to sqrt(2)", Math.sqrt(8),Point2D.Distance(point,new Point2D(7,7)), 0.000000001);
+        assertEquals("Does point distance equal to sqrt(50)", Math.sqrt(50),Point2D.Distance(point,new Point2D(0,0)), 0.000000001);
     }
 
     @Test
@@ -106,4 +198,30 @@ public class JUnit
         assertEquals("Does Rect intersect Rect X20 Y20 WfloatMax HfloatMax.",true,myRect.Intersect(new Rect(20,20,5000,5000)));
         assertEquals("Does Rect intersect Rect XfloatMin YfloatMin WfloatMax HfloatMax.",false,myRect.Intersect(new Rect(Integer.MIN_VALUE,Integer.MIN_VALUE,Integer.MAX_VALUE,Integer.MIN_VALUE)));
     }
+    
+    private void createBlock(EBlock type, Link[] links){
+		Block thisBlock = new Block(type, new Rect(0, 0, 0, 0));
+		blocks.add(thisBlock);
+		Port inPort;
+		for (int i = 0; i < links.length; ++i) {
+			blocks.get(blocks.size() - 1).genInPort();
+			inPort = thisBlock.getInPorts().get(i);
+			links[i].setOutPort(inPort);
+			inPort.setLink(links[i]);
+		}
+		thisBlock.genOutPort();
+	}
+	
+	private void createReverseBlock(EBlock type, Link[] links){
+		Block thisBlock = new Block(type, new Rect(0, 0, 0, 0));
+		blocks.add(thisBlock);
+		Port inPort;
+		for (int i = 0; i < 2; ++i) {
+			thisBlock.genInPort();
+			inPort = thisBlock.getInPorts().get(i);
+			links[i].setOutPort(inPort);
+			inPort.setLink(links[i]);
+		}
+		thisBlock.genOutPort();
+	}
 }

@@ -2,8 +2,10 @@ package Base;
 
 public enum EBlock
 {
-    SUM,
+    ADD,
     MUL,
     SUB,
-    DIV
+    DIV,
+    IN,
+    OUT
 }

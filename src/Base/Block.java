@@ -1,11 +1,10 @@
 package Base;
 
+import java.util.ArrayList;
+
 import Graphics.DrawableObject;
 import Graphics.Rect;
 import javafx.scene.canvas.GraphicsContext;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 
@@ -17,121 +16,148 @@ interface MyCallBack
 public class Block implements DrawableObject
 {
     private EBlock _eBlock;
-    private List<Port> _inputPortList;
-    private Port _output;
-    private int _numOfInput;
     private Rect _rect;
+    private ArrayList<Port> inPorts = new ArrayList<Port>();
+	private ArrayList<Port> outPorts = new ArrayList<Port>();
+	private double value = 0;
+	private boolean calculated = false;
 
-    public Port Output()
-    {
-        return _output;
-    }
+	public Block(EBlock eBlock, Rect rect) {
+		super();
+		this._eBlock = eBlock;
+		this._rect = rect;
+	}
 
-    public Port GetInputPort(int index)
-    {
-        return _inputPortList.get(index);
-    }
-    public Port GetEmptyInputPort()
-    {
-        for (Port port :_inputPortList) {
-            if(!port.IsValueSet)
-                return port;
-        }
-        return null;
-    }
+	public Block(EBlock eBlock, Rect rect, double value) {
+		super();
+		this._eBlock = eBlock;
+		this._rect = rect;
+		this.value = value;
+//		TODO newport
+		Rect newport = new Rect(0, 0, 0, 0);
+		outPorts.add(new Port(newport, this));
+	}
+	
+//	 public Block(EBlock eBlock, Rect rect, int numOfInput)
+//	    {
+//	        if(numOfInput < 2)
+//	            System.out.println("ERROR");
+//	        _eBlock = eBlock;
+//	        _rect = rect;
+//	        _numOfInput = numOfInput;
+//	        _inputPortList = new ArrayList<>();
+//	        AddInputPort();
+//	    }
 
-    public Block(EBlock eBlock, Rect rect, int numOfInput)
-    {
-        if(numOfInput < 2)
-            System.out.println("ERROR");
-        _eBlock = eBlock;
-        _rect = rect;
-        _numOfInput = numOfInput;
-        _inputPortList = new ArrayList<>();
-        AddInputPort();
-    }
+//	    public Block(EBlock eBlock, Rect rect, int... inputValues)
+//	    {
+//	        if(inputValues.length<2)
+//	            System.out.println("ERROR");
+//	        _eBlock = eBlock;
+//	        _rect = rect;
+//	        _inputPortList = new ArrayList<>();
+//	        _numOfInput = inputValues.length;
+//	        AddInputPort();
+//	        for (int i = 0; i<_numOfInput;i++)
+//	        {
+//	            _inputPortList.get(i).SetValue(inputValues[i]);
+//	            _inputPortList.get(i).IsValueSet = true;
+//	        }
+//	    }
 
-    public Block(EBlock eBlock, Rect rect, int... inputValues)
-    {
-        if(inputValues.length<2)
-            System.out.println("ERROR");
-        _eBlock = eBlock;
-        _rect = rect;
-        _inputPortList = new ArrayList<>();
-        _numOfInput = inputValues.length;
-        AddInputPort();
-        for (int i = 0; i<_numOfInput;i++)
-        {
-            _inputPortList.get(i).SetValue(inputValues[i]);
-            _inputPortList.get(i).IsValueSet = true;
-        }
-    }
+//	    public Block(EBlock eBlock,Rect rect)
+//	    {
+//	        _eBlock = eBlock;
+//	        _rect = rect;
+//	        _numOfInput = 2;
+//	        _inputPortList = new ArrayList<>();
+//	        AddInputPort();
+//	    }
+	
+	
+	
+	
+	public void genInPort() {
+//		TODO newport
+		Rect newport = new Rect(0,0,0,0);
+		this.inPorts.add(new Port(newport, this));
+	}
 
-    public Block(EBlock eBlock,Rect rect)
-    {
-        _eBlock = eBlock;
-        _rect = rect;
-        _numOfInput = 2;
-        _inputPortList = new ArrayList<>();
-        AddInputPort();
-    }
+	
+	public void genOutPort() {
+//		TODO newport
+		Rect newport = new Rect(0,0,0,0);
+		this.outPorts.add(new Port(newport, this));
+	}
 
-    public void EditPortValue(int index, double value)
-    {
-        _inputPortList.get(index).SetValue(value);
-        _inputPortList.get(index).IsValueSet = true;
-    }
+	
+	public static double compute(Block block) {
+		boolean first = true;
+		if (block.calculated)
+			return block.value;
+		for (Port port : block.getInPorts()) {
+			Link frontLink = port.getLink();
+			if (frontLink != null) {
+				double value = compute(frontLink.getInPort().GetBlock());
+				if (first) {
+					first = false;
+					block.value = value;
+					continue;
+				}
+				switch (block.getType()) {
+				case ADD:
+					block.value += value;
+					break;
+				case SUB:
+					block.value -= value;
+					break;
+				case MUL:
+					block.value *= value;
+					break;
+				case DIV:
+					block.value /= value;
+					break;
+				default:
+					block.value = value;
+				}
+			}
+		}
+		block.calculated = true;
+		return block.value;
+	}
+	
+	public static void unsetCalculated(Block block) {
+		if(block == null)
+			return;
+		block.calculated = false;
+		for (Port port:block.getOutPorts()) {
+			Link link = port.getLink();
+			if(link == null)
+				return;
+			unsetCalculated(link.getOutPort().GetBlock());
+		}
+	}
 
-    public void SetPortValue(double value)
-    {
-        Port tmp = GetEmptyInputPort();
-        tmp.SetValue(value);
-        tmp.IsValueSet = true;
-    }
+	public ArrayList<Port> getInPorts() {
+		return inPorts;
+	}
 
-    private void AddInputPort()
-    {
-        for (int i = 0;i< _numOfInput;i++)
-        {
-            _inputPortList.add(new Port(new Rect(_rect.X + 5,_rect.Y+10+i*30,5,5),this));
-        }
-        _output = new Port(new Rect(_rect.XMax() - 5,_rect.Y + 10,5,5),this);
-    }
+	public ArrayList<Port> getOutPorts() {
+		return outPorts;
+	}
 
-    public double Calculate()
-    {
-        if(_inputPortList.size() < 2)
-        {
-            System.out.println("ERROR!!");
-        }
-        else
-        {
-            if (_eBlock == EBlock.SUM)
-                ForEach((a, b) -> a + b);
-            else if (_eBlock == EBlock.SUB)
-                ForEach((a, b) -> a - b);
-            else if (_eBlock == EBlock.MUL)
-                ForEach((a, b) -> a * b);
-            else if (_eBlock == EBlock.DIV)
-                ForEach((a, b) -> a / b);
-        }
-        return 0;
-    }
+	public double getValue() {
+		return value;
+	}
 
-    private void ForEach(MyCallBack callback)
-    {
-        double a = callback.MathFunction(_inputPortList.get(0).GetValue(), _inputPortList.get(1).GetValue());
-        for (int i =2;i<_inputPortList.size();i++)
-        {
-            a = callback.MathFunction(a, _inputPortList.get(i).GetValue());
-        }
-        _output.SetValue(a);
-        if(_output.GetLink() != null)
-        {
-            _output.GetLink().SetValue(a);
-            _output.GetLink().GetOutput().SetValue(a);
-        }
-    }
+	public EBlock getType() {
+		return _eBlock;
+	}
+
+	public void setType(EBlock eBlock) {
+		this._eBlock = eBlock;
+		unsetCalculated(this);
+	}
 
     @Override
     public void Draw(GraphicsContext gc)

@@ -9,25 +9,13 @@ public class Port implements DrawableObject {
     public Rect Rect;
     private Block _block;
     private Link _link;
-    public boolean IsValueSet;
-    private double _value;
 
     public Link GetLink() {
         return _link;
     }
 
-    public void AddLink(Link link) {
+    public void setLink(Link link) {
         this._link = link;
-    }
-
-    public double GetValue()
-    {
-        return _value;
-    }
-
-    public void SetValue(double _value)
-    {
-        this._value = _value;
     }
 
     public Block GetBlock()
@@ -39,7 +27,6 @@ public class Port implements DrawableObject {
     {
         Rect = rect;
         _block = block;
-        IsValueSet = false;
     }
 
 
@@ -48,4 +35,8 @@ public class Port implements DrawableObject {
     {
 
     }
+
+	public Link getLink() {
+		return _link;
+	}
 }

@@ -6,7 +6,6 @@ import java.util.ResourceBundle;
 
 import Base.Block;
 import Base.EBlock;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -77,7 +76,7 @@ public class BlockDialogContoller implements Initializable{
 		{
 			Block block = new Block(type,new Rect(_position,100,100));
 			Panel.BlockList.add(block);
-			block.Draw(FXMLExampleController.Panel);
+			block.Draw(FXMLExampleController.AnchorPanel);
 			close();
 		});
 	}

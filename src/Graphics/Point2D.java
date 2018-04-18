@@ -2,10 +2,10 @@ package Graphics;
 
 public class Point2D
 {
-    public int X;
-    public int Y;
+    public double X;
+    public double Y;
 
-    public Point2D(int x,int y)
+    public Point2D(double x,double y)
     {
         X = x;
         Y = y;
@@ -19,6 +19,11 @@ public class Point2D
     public static double Distance(Point2D first, Point2D second)
     {
         return Math.sqrt(Math.pow(first.X -second.X,2)+Math.pow(first.Y -second.Y,2));
+    }
+
+    public static Point2D Vector(Point2D first, Point2D second)
+    {
+        return new Point2D(second.X-first.X,second.Y-first.Y);
     }
 
     @Override

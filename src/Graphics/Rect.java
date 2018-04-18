@@ -1,137 +1,103 @@
 package Graphics;
 
-public class Rect extends Point2D
+import javafx.scene.shape.Rectangle;
+
+public class Rect extends Rectangle
 {
-    private int _sizeX;
-    private int _sizeY;
-    private int _xMin;
-    private int _xMax;
-    private int _yMin;
-    private int _yMax;
-    //region Getters
 
-    public int XMin() {
-        return _xMin;
+    public double XMin() {
+        return getX();
     }
 
-    public int XMax() {
-        return _xMax;
+    public double XMax() { return getX() + getWidth();
     }
 
-    public int YMin() {
-        return _yMin;
+    public double YMin() {
+        return getY();
     }
 
-    public int YMax() {
-        return _yMax;
+    public double YMax() {
+        return getY() + getHeight();
     }
 
     public Point2D Position()
     {
-        return new Point2D(X,Y);
+        return new Point2D(getX(),getY());
     }
 
     public Point2D Size()
     {
-        return new Point2D(_sizeX,_sizeY);
+        return new Point2D(getWidth(),getHeight());
     }
 
     public Point2D Center()
     {
-        return new Point2D(X+(_sizeX/2),Y+(_sizeY/2));
+        return new Point2D(getX()+(getWidth()/2),getY()+(getHeight()/2));
     }
-
-    public void SetSizeX(int x) {_sizeX = x;}
-
-    public void SetSizeY(int y) {_sizeY = y;}
-
-    public int Width()
-    {
-        return _sizeX;
-    }
-
-    public int Height()
-    {
-        return _sizeY;
-    }
-    //endregion
 
     public static Rect ZERO = new Rect(0,0,0,0);
 
     public Rect(Rect rect)
     {
-        X = rect.X;
-        Y= rect.Y;
-        _sizeY = rect._sizeX;
-        _sizeX = rect._sizeX;
-        CalcInternalVariables();
+        super();
+        setX(rect.getX());
+        setY(rect.getY());
+        setWidth(rect.getWidth());
+        setHeight(rect.getHeight());
     }
 
     public Rect(Point2D position, Point2D size)
     {
-        X = position.X;
-        Y = position.Y;
-        _sizeX = size.X;
-        _sizeY = size.Y;
-        CalcInternalVariables();
+        super();
+        setX(position.X);
+        setY(position.Y);
+        setWidth(size.X);
+        setHeight(size.Y);
     }
 
-    public Rect(int positionX,int positionY, Point2D size)
+    public Rect(double positionX,double positionY, Point2D size)
     {
-        X = positionX;
-        Y = positionY;
-        _sizeX = size.X;
-        _sizeY = size.Y;
-        CalcInternalVariables();
+        super();
+        setX(positionX);
+        setY(positionY);
+        setWidth(size.X);
+        setHeight(size.Y);
     }
 
-    public Rect(Point2D position, int sizeX,int sizeY)
+    public Rect(Point2D position, double sizeX,double sizeY)
     {
-        X = position.X;
-        Y = position.Y;
-        _sizeX = sizeX;
-        _sizeY = sizeY;
-        CalcInternalVariables();
+        super();
+        setX(position.X);
+        setY(position.Y);
+        setWidth(sizeX);
+        setHeight(sizeY);
     }
 
-    public Rect(int positionX,int positionY, int sizeX,int sizeY)
+    public Rect(double positionX,double positionY, double sizeX,double sizeY)
     {
-        X = positionX;
-        Y = positionY;
-        _sizeX = sizeX;
-        _sizeY = sizeY;
-        CalcInternalVariables();
-    }
-
-    private void CalcInternalVariables()
-    {
-        _xMin = X;
-        _xMax = X+_sizeX;
-        _yMin = Y;
-        _yMax = Y+_sizeY;
+        super();
+        setX(positionX);
+        setY(positionY);
+        setWidth(sizeX);
+        setHeight(sizeY);
     }
 
     public boolean Contains(Point2D point)
     {
-        return point.X >=  X && point.X <= _xMax && point.Y >= Y && point.Y <= _yMax;
+        return point.X >=  getX() && point.X <= XMax() && point.Y >= getY() && point.Y <= YMax();
     }
 
     public boolean Intersect(Rect rect)
     {
-        int xmin = Math.max(X, rect.X);
-        int xmax = Math.min(_xMax, rect._xMax);
+        double xmin = Math.max(getX(), rect.getX());
+        double xmax = Math.min(XMax(), rect.XMax());
         if (xmax >= xmin) {
-            int ymin = Math.max(Y,rect.Y);
-            int ymax = Math.min(_yMax, rect._yMax);
+            double ymin = Math.max(getY(),rect.getY());
+            double ymax = Math.min(YMax(), rect.YMax());
             if (ymax >= ymin) {
                 return true;
             }
         }
         return false;
-    }
-
-    @Override
-    public String toString() {
-        return "Rect: X = "+X+" Y = "+Y+" Width = "+_sizeX+" Height = "+_sizeY;
     }
 }

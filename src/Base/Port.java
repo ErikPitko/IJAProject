@@ -14,7 +14,7 @@ public class Port implements DrawableObject {
     private Block _block;
     private Link _link;
     private Color _backgroundColor;
-    public static final int PORT_SIZE = 10;
+    public static final int PORT_SIZE = 15;
 
     public Link GetLink() {
         return _link;
@@ -47,14 +47,9 @@ public class Port implements DrawableObject {
     @Override
     public void Draw(AnchorPane pane)
     {
-        Rectangle r = new Rectangle();
-        r.setX(Rect.X);
-        r.setY(Rect.Y);
-        r.setWidth(Rect.Width());
-        r.setHeight(Rect.Height());
-        r.setFill(_backgroundColor);
-        r.setStroke(Color.BLACK);
-        pane.getChildren().add(r);
+        Rect.setFill(_backgroundColor);
+        Rect.setStroke(Color.BLACK);
+        pane.getChildren().add(Rect);
     }
 
 	public Link getLink() {

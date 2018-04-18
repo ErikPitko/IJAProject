@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import Graphics.DrawableObject;
+import Graphics.FXMLExampleController;
 import Graphics.Point2D;
 import Graphics.Rect;
 import javafx.scene.image.Image;
@@ -20,6 +21,7 @@ public class Block implements DrawableObject
 {
     private EBlock _eBlock;
     private Rect _rect;
+    private ImageView image;
     private ArrayList<Port> inPorts = new ArrayList<Port>();
 	private Port _outPort;
 	private double value = 0;
@@ -42,7 +44,7 @@ public class Block implements DrawableObject
 		this.value = value;
 		_outPort = new Port(new Rect(_rect.XMax()-(Port.PORT_SIZE+Port.PORT_SIZE/2),_rect.getY()+_rect.getHeight()/2-Port.PORT_SIZE/2,Port.PORT_SIZE,Port.PORT_SIZE),this,Color.RED);
 	}
-	
+
 	private void CalculatePortsToMiddle() {
 		RecalculateHeights();
 		double step = _rect.getHeight() / inPorts.size();
@@ -121,6 +123,11 @@ public class Block implements DrawableObject
 			disp.setTranslateX(_rect.Center().X - disp.getBoundsInLocal().getWidth()/2);
 		}
 	}
+
+	public ImageView getImageView()
+	{
+		return image;
+	}
 	
 	public static double compute(Block block) {
 		boolean first = true;
@@ -196,11 +203,38 @@ public class Block implements DrawableObject
 		unsetCalculated(this);
 	}
 
+	public void Move(double deltaX, double deltaY)
+	{
+		_rect.setX(_rect.getX() + deltaX);
+		_rect.setY(_rect.getY() + deltaY);
+		_outPort.Rect.setX(_outPort.Rect.getX()+deltaX);
+		_outPort.Rect.setY(_outPort.Rect.getY()+deltaY);
+		image.setX(image.getX() + deltaX);
+		image.setY(image.getY() + deltaY);
+		debugDisp.setX(debugDisp.getX()+deltaX);
+		debugDisp.setY(debugDisp.getY()+deltaY);
+		if(_outPort.getLink()!= null)
+		{
+			FXMLExampleController.AnchorPanel.getChildren().remove(_outPort.getLink().getLine());
+			_outPort.getLink().getInPort().getLink().Draw(FXMLExampleController.AnchorPanel);
+		}
+		for (Port inport: inPorts)
+		{
+			inport.Rect.setX(inport.Rect.getX()+deltaX);
+			inport.Rect.setY(inport.Rect.getY()+deltaY);
+			if(inport.getLink()!= null)
+			{
+				FXMLExampleController.AnchorPanel.getChildren().remove(inport.getLink().getLine());
+				inport.getLink().Draw(FXMLExampleController.AnchorPanel);
+			}
+		}
+	}
+
     @Override
     public void Draw(AnchorPane pane)
     {
 		
-		ImageView image = new ImageView(new Image(getClass().getResourceAsStream("/Res/"+_eBlock.toString()+".png")));
+		image = new ImageView(new Image(getClass().getResourceAsStream("/Res/"+_eBlock.toString()+".png")));
 		image.setFitHeight(_rect.getHeight());
 		image.setFitWidth(_rect.getWidth());
 		image.setX(_rect.getX());

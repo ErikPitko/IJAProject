@@ -10,11 +10,10 @@ import Base.Port;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 
 public class FXMLExampleController implements Initializable
@@ -27,37 +26,6 @@ public class FXMLExampleController implements Initializable
     private boolean isIn;
     private Point2D startDrag;
     private Block startDragBlock;
-    private Rectangle rectangle;
-    private void drawDShape(GraphicsContext gc) {
-        gc.beginPath();
-        gc.moveTo(100, 100);
-        gc.bezierCurveTo(0, 0, 150, 150, 75, 150);
-        gc.closePath();
-    }
-    private void drawLines(GraphicsContext gc) {
-
-        gc.beginPath();
-        gc.moveTo(30.5, 30.5);
-        gc.lineTo(150.5, 30.5);
-        gc.lineTo(150.5, 150.5);
-        gc.lineTo(30.5, 30.5);
-        gc.stroke();
-    }
-    private Point2D lineStartPosit;
-
-    private void DrawLine(GraphicsContext gc, MouseEvent event)
-    {
-        if(lineStartPosit == null)
-            lineStartPosit = new Point2D((int) event.getX(),(int)event.getY());
-        else
-        {
-            gc.beginPath();
-            gc.moveTo(lineStartPosit.X,lineStartPosit.Y);
-            gc.lineTo((int) event.getX(),(int)event.getY());
-            gc.stroke();
-            lineStartPosit = null;
-        }
-    }
     
     public static void onClose() {
     	BlockDialogContoller.close();
@@ -182,49 +150,35 @@ public class FXMLExampleController implements Initializable
                 }
             }
         });
+
         anch.setOnMousePressed(event ->
         {
-            if ((event.getTarget() instanceof Rectangle)) {
-                if(((Rectangle) event.getTarget()).getHeight()!= Port.PORT_SIZE && ((Rectangle) event.getTarget()).getWidth()!= Port.PORT_SIZE)
+            if ((event.getTarget() instanceof ImageView)) {
+                if(((ImageView) event.getTarget()).getFitHeight()!= Port.PORT_SIZE && ((ImageView) event.getTarget()).getFitHeight()!= Port.PORT_SIZE)
                     for (int i = 0;i<Panel.BlockList.size();i++) {
-                        if (Panel.BlockList.get(i).getRect() == (Rectangle)(event.getTarget())) {
-                            rectangle = (Rectangle) event.getTarget();
+                        if (Panel.BlockList.get(i).getImageView() == event.getTarget())
+                        {
                             startDrag = new Point2D((int) event.getX(), (int) event.getY());
                             startDragBlock = Panel.BlockList.get(i);
                         }
                     }
             }
         });
+        anch.setOnMouseDragged(event ->
+        {
+            if(startDragBlock != null)
+            {
+                double deltaX = -Point2D.Vector(new Point2D(event.getX(), event.getY()), startDrag).X;
+                double deltaY = -Point2D.Vector(new Point2D(event.getX(), event.getY()), startDrag).Y;
+                startDragBlock.Move(deltaX, deltaY);
+                startDrag = new Point2D((int) event.getX(), (int) event.getY());
+            }
+        });
         anch.setOnMouseReleased(event ->
         {
             if(startDragBlock != null)
             {
-                double deltaX= - Point2D.Vector(new Point2D(event.getX(), event.getY()), startDrag).X;
-                double deltaY = - Point2D.Vector(new Point2D(event.getX(), event.getY()), startDrag).Y;
-                startDragBlock.getRect().setX(startDragBlock.getRect().getX() + deltaX);
-                startDragBlock.getRect().setY(startDragBlock.getRect().getY() + deltaY);
-                startDragBlock.GetOutPort().Rect.setX(startDragBlock.GetOutPort().Rect.getX()+deltaX);
-                startDragBlock.GetOutPort().Rect.setY(startDragBlock.GetOutPort().Rect.getY()+deltaY);
-                if(startDragBlock.GetOutPort().getLink()!= null)
-                {
-                    anch.getChildren().remove(startDragBlock.GetOutPort().getLink().getLine());
-                    startDragBlock.GetOutPort().getLink().Draw(anch);
-                }
-                for (Port inport: startDragBlock.getInPorts())
-                {
-
-                    inport.Rect.setX(inport.Rect.getX()+deltaX);
-                    inport.Rect.setY(inport.Rect.getY()+deltaY);
-                    System.out.println(anch);
-                    if(inport.getLink()!= null)
-                    {
-                        anch.getChildren().remove(inport.getLink().getLine());
-                        inport.getLink().Draw(anch);
-                    }
-                }
                 startDragBlock = null;
-                System.out.println(Point2D.Vector(new Point2D((int) event.getX(), (int) event.getY()), startDrag));
-                //System.out.println(Point2D.Distance(new Point2D((int)event.getgetX(),(int)event.getgetY()),startDrag));
             }
         });
     }

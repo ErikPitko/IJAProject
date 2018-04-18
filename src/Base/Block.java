@@ -116,11 +116,11 @@ public class Block implements DrawableObject
 		this.value = value;
 		if(debugDisp != null) {
 			debugDisp.setText(String.valueOf(value));
-			debugDisp.setTranslateX(_rect.getX() + _rect.getWidth() - debugDisp.getBoundsInLocal().getWidth());
+			debugDisp.setX(_rect.getX() + _rect.getWidth() - debugDisp.getBoundsInLocal().getWidth());
 		}
 		if(disp != null) {
 			disp.setText(String.valueOf(value));
-			disp.setTranslateX(_rect.Center().X - disp.getBoundsInLocal().getWidth()/2);
+			disp.setX(_rect.Center().X - disp.getBoundsInLocal().getWidth()/2);
 		}
 	}
 
@@ -251,16 +251,16 @@ public class Block implements DrawableObject
 		
 		debugDisp = new Text(String.valueOf(value));
 		debugDisp.setFont(font);
-		debugDisp.setTranslateX(_rect.getX() + _rect.getWidth() - debugDisp.getBoundsInLocal().getWidth());
-		debugDisp.setTranslateY(_rect.getY() - 5);
+		debugDisp.setX(_rect.getX() + _rect.getWidth() - debugDisp.getBoundsInLocal().getWidth());
+		debugDisp.setY(_rect.getY() - 5);
 		debugDisp.setMouseTransparent(true);
 		
 		if (_eBlock == EBlock.OUT) {
 			disp = new Text(String.valueOf(value));
 			disp.setMouseTransparent(true);
 			disp.setFont(font);
-			disp.setTranslateX(_rect.Center().X - disp.getBoundsInLocal().getWidth()/2);
-			disp.setTranslateY(_rect.Center().Y + 5);
+			disp.setX(_rect.Center().X - disp.getBoundsInLocal().getWidth()/2);
+			disp.setY(_rect.Center().Y + 5);
 			disp.setTextAlignment(TextAlignment.CENTER);
 			pane.getChildren().addAll(_rect, image, debugDisp, disp);
 		}else

@@ -6,6 +6,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -36,6 +37,15 @@ public class Panel extends Application
         	@Override
         	public void handle(WindowEvent event) {
         		FXMLExampleController.onClose();
+        	}
+        });
+        
+        scene.setOnKeyPressed(arg -> {
+        	if(arg.getCode() == KeyCode.ENTER) {
+        		System.out.println("calculate");
+        		for(int i = 0; i < Panel.BlockList.size(); i++) {
+        			Block.compute(Panel.BlockList.get(i));
+        		}
         	}
         });
         

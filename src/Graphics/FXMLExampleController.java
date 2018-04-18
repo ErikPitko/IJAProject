@@ -9,12 +9,14 @@ import Base.Link;
 import Base.Port;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
+import jdk.nashorn.internal.ir.BlockLexicalContext;
+import sun.security.util.PendingException;
 
 public class FXMLExampleController implements Initializable
 {
@@ -71,6 +73,7 @@ public class FXMLExampleController implements Initializable
         Panel.BlockList.add(bl);
         Panel.BlockList.add(bl1);
         Panel.BlockList.add(bl2);
+        
         anch.setOnMouseClicked(arg0 ->
         {
         	BlockDialogContoller.close();
@@ -118,6 +121,8 @@ public class FXMLExampleController implements Initializable
                                                 source = null;
                                             else if(source.GetBlock() != Panel.BlockList.get(i).getInPorts().get(y).GetBlock())
                                             {
+                                            	Block.unsetCalculated(source.GetBlock());
+                                            	Block.unsetCalculated(Panel.BlockList.get(i));
                                                 Link l2 = new Link(source, Panel.BlockList.get(i).getInPorts().get(y));
                                                 l2.Draw(anch);
                                                 source = null;
@@ -130,7 +135,9 @@ public class FXMLExampleController implements Initializable
                                                 source = null;
                                             else if(source.GetBlock() != Panel.BlockList.get(i).GetOutPort().GetBlock())
                                             {
-                                                Link l2 = new Link(source, Panel.BlockList.get(i).GetOutPort());
+                                            	Block.unsetCalculated(source.GetBlock());
+                                            	Block.unsetCalculated(Panel.BlockList.get(i));
+                                                Link l2 = new Link(Panel.BlockList.get(i).GetOutPort(),source);
                                                 l2.Draw(anch);
                                                 source = null;
                                             }

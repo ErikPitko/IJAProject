@@ -151,8 +151,8 @@ public class JUnit
 	@Test
     public void PointTest()
     {
-        assertEquals("Does point X = 5",5,point.X);
-        assertEquals("Does point Y = 5",5,point.Y);
+        assertEquals("Does point X = 5",5.0,point.X, 0.000000001);
+        assertEquals("Does point Y = 5",5.0,point.Y, 0.000000001);
         assertEquals("Does point distance equal to 4",4.0,Point2D.Distance(point,new Point2D(5,9)), 0.000000001);
         assertEquals("Does point distance equal to 4",4.0,Point2D.Distance(point,new Point2D(9,5)), 0.000000001);
         assertEquals("Does point distance equal to sqrt(2)", Math.sqrt(8),Point2D.Distance(point,new Point2D(7,7)), 0.000000001);

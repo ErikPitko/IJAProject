@@ -1,13 +1,20 @@
 package Base;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import Graphics.DrawableObject;
 import Graphics.Point2D;
 import Graphics.Rect;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 public class Block implements DrawableObject
 {
@@ -17,6 +24,9 @@ public class Block implements DrawableObject
 	private Port _outPort;
 	private double value = 0;
 	private boolean calculated = false;
+	
+	private Text debugDisp;
+	private Text disp;
 
 	public Block(EBlock eBlock, Rect rect) {
 		super();
@@ -30,13 +40,11 @@ public class Block implements DrawableObject
 		this._eBlock = eBlock;
 		this._rect = rect;
 		this.value = value;
-//		TODO newport
-		Rect newport = new Rect(0, 0, 0, 0);
 		_outPort = new Port(new Rect(_rect.XMax()-(Port.PORT_SIZE+Port.PORT_SIZE/2),_rect.getY()+_rect.getHeight()/2-Port.PORT_SIZE/2,Port.PORT_SIZE,Port.PORT_SIZE),this,Color.RED);
 	}
-
+	
 	private void CalculatePortsToMiddle() {
-		boolean resized = RecalculateHeights();
+		RecalculateHeights();
 		double step = _rect.getHeight() / inPorts.size();
 		double div = step / 2;
 		for (int i = 0; i < inPorts.size(); i++)
@@ -55,6 +63,7 @@ public class Block implements DrawableObject
 		}
 		return false;
 	}
+
 
 //	 public Block(EBlock eBlock, Rect rect, int numOfInput)
 //	    {
@@ -96,12 +105,22 @@ public class Block implements DrawableObject
 	
 	
 	public void genInPort() {
-//		TODO newport
 		Rect newport = new Rect(_rect.getX()+Port.PORT_SIZE/2,_rect.getY()+Port.PORT_SIZE/2 + Port.PORT_SIZE +5*inPorts.size(),Port.PORT_SIZE,Port.PORT_SIZE);
 		this.inPorts.add(new Port(newport, this));
 		CalculatePortsToMiddle();
 	}
-
+	
+	private void setValue(double value) {
+		this.value = value;
+		if(debugDisp != null) {
+			debugDisp.setText(String.valueOf(value));
+			debugDisp.setTranslateX(_rect.getX() + _rect.getWidth() - debugDisp.getBoundsInLocal().getWidth());
+		}
+		if(disp != null) {
+			disp.setText(String.valueOf(value));
+			disp.setTranslateX(_rect.Center().X - disp.getBoundsInLocal().getWidth()/2);
+		}
+	}
 	
 	public static double compute(Block block) {
 		boolean first = true;
@@ -113,24 +132,24 @@ public class Block implements DrawableObject
 				double value = compute(frontLink.getInPort().GetBlock());
 				if (first) {
 					first = false;
-					block.value = value;
+					block.setValue(value);
 					continue;
 				}
 				switch (block.getType()) {
 				case ADD:
-					block.value += value;
+					block.setValue(block.value + value);
 					break;
 				case SUB:
-					block.value -= value;
+					block.setValue(block.value - value);
 					break;
 				case MUL:
-					block.value *= value;
+					block.setValue(block.value * value);
 					break;
 				case DIV:
-					block.value /= value;
+					block.setValue(block.value / value);
 					break;
 				default:
-					block.value = value;
+					block.setValue(value);
 				}
 			}
 		}
@@ -180,9 +199,37 @@ public class Block implements DrawableObject
     @Override
     public void Draw(AnchorPane pane)
     {
-		_rect.setFill(new Color(0.8,0.8,0.8,1));
-		_rect.setStroke(Color.BLACK);
-		pane.getChildren().add(_rect);
+		
+		ImageView image = new ImageView(new Image(getClass().getResourceAsStream("/Res/"+_eBlock.toString()+".png")));
+		image.setFitHeight(_rect.getHeight());
+		image.setFitWidth(_rect.getWidth());
+		image.setX(_rect.getX());
+		image.setY(_rect.getY());
+		
+		Font font = null;
+		try {
+			font = Font.loadFont(new FileInputStream(new File("src/Res/fonts/Crasns.ttf")), 15);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		debugDisp = new Text(String.valueOf(value));
+		debugDisp.setFont(font);
+		debugDisp.setTranslateX(_rect.getX() + _rect.getWidth() - debugDisp.getBoundsInLocal().getWidth());
+		debugDisp.setTranslateY(_rect.getY() - 5);
+		debugDisp.setMouseTransparent(true);
+		
+		if (_eBlock == EBlock.OUT) {
+			disp = new Text(String.valueOf(value));
+			disp.setMouseTransparent(true);
+			disp.setFont(font);
+			disp.setTranslateX(_rect.Center().X - disp.getBoundsInLocal().getWidth()/2);
+			disp.setTranslateY(_rect.Center().Y + 5);
+			disp.setTextAlignment(TextAlignment.CENTER);
+			pane.getChildren().addAll(_rect, image, debugDisp, disp);
+		}else
+			pane.getChildren().addAll(_rect, image, debugDisp);
+		
 		for (Port p: inPorts)
 		{
 			p.Draw(pane);

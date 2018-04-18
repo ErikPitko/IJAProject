@@ -1,6 +1,8 @@
 package Graphics;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import Base.Block;
@@ -18,6 +20,10 @@ public class FXMLExampleController implements Initializable
 {
     @FXML
     private AnchorPane anch;
+
+    public static AnchorPane Panel;
+
+
     private void drawDShape(GraphicsContext gc) {
         gc.beginPath();
         gc.moveTo(100, 100);
@@ -57,6 +63,7 @@ public class FXMLExampleController implements Initializable
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
+        Panel = anch;
         Block bl = new Block(EBlock.ADD,new Rect(100,100,200,200));
         bl.genInPort();
         bl.genInPort();
@@ -95,7 +102,8 @@ public class FXMLExampleController implements Initializable
         {
         	BlockDialogContoller.close();
         	if (arg0.getButton().equals(MouseButton.SECONDARY)) {
-        		if (!(arg0.getTarget() instanceof Rectangle))
+                System.out.println(arg0.getTarget());
+        		if ((arg0.getTarget() instanceof AnchorPane))
         		{
         			BlockDialogContoller.CreateBlockDialog(arg0);
         		}

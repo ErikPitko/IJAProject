@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import Base.Block;
+import Base.EBlock;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -34,6 +37,8 @@ public class BlockDialogContoller implements Initializable{
 	@FXML
 	private Button OUT;
 
+	private static Point2D _position;
+
 	public static void CreateBlockDialog(MouseEvent event) {
 		close();
 		Parent root;
@@ -46,6 +51,7 @@ public class BlockDialogContoller implements Initializable{
             instance.setY(Panel.getStage().getY() + event.getY());
             instance.initStyle(StageStyle.UNDECORATED);
             instance.setResizable(false);
+			_position = new Point2D((int)event.getX(),(int)event.getY());
             instance.show();
         }
         catch (IOException e) {
@@ -60,23 +66,30 @@ public class BlockDialogContoller implements Initializable{
 		}
 	}
 
-	private void InitButt(Button butt, String path)
+	private void InitButt(Button butt, EBlock type)
 	{
-		ImageView add = new ImageView(new Image(getClass().getResourceAsStream(path)));
+		ImageView add = new ImageView(new Image(getClass().getResourceAsStream("/Res/"+type.toString()+".png")));
 		add.setFitHeight(64);
 		add.setFitWidth(64);
 		butt.setGraphic(add);
 		butt.setPadding(Insets.EMPTY);
+		butt.setOnMouseClicked(event->
+		{
+			Block block = new Block(type,new Rect(_position,100,100));
+			Panel.BlockList.add(block);
+			block.Draw(FXMLExampleController.Panel);
+			close();
+		});
 	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		InitButt(ADD,"/Res/ADD.png");
-		InitButt(SUB,"/Res/SUB.png");
-		InitButt(MUL,"/Res/MUL.png");
-		InitButt(DIV,"/Res/DIV.png");
-		InitButt(IN,"/Res/IN.png");
-		InitButt(OUT,"/Res/DISP.png");
+		InitButt(ADD,EBlock.ADD);
+		InitButt(SUB,EBlock.SUB);
+		InitButt(MUL,EBlock.MUL);
+		InitButt(DIV,EBlock.DIV);
+		InitButt(IN,EBlock.IN);
+		InitButt(OUT,EBlock.OUT);
 	}
 	
 

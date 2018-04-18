@@ -65,6 +65,7 @@ public class Link implements DrawableObject {
 		l.setEndX(outPort.Rect.Center().X);
 		l.setEndY(outPort.Rect.Center().Y);
 		l.setFill(Color.BLACK);
+		l.setStrokeWidth(3);
 		pane.getChildren().add(l);
 	}
 

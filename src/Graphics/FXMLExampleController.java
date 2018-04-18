@@ -114,7 +114,7 @@ public class FXMLExampleController implements Initializable
                                     for(int y = 0;y<Panel.BlockList.get(i).getInPorts().size();y++)
                                         if(Panel.BlockList.get(i).getInPorts().get(y).Rect.getX() == ((Rectangle) arg0.getTarget()).getX() && Panel.BlockList.get(i).getInPorts().get(y).Rect.getY() == ((Rectangle) arg0.getTarget()).getY()&& !isIn)
                                         {
-                                            if(Panel.BlockList.get(i).getInPorts().get(y).getLink() != null)
+                                            if(Panel.BlockList.get(i).getInPorts().get(y).GetLinks().size() > 0)
                                                 source = null;
                                             else if(source.GetBlock() != Panel.BlockList.get(i).getInPorts().get(y).GetBlock())
                                             {
@@ -126,7 +126,7 @@ public class FXMLExampleController implements Initializable
                                     if(source != null)
                                         if(Panel.BlockList.get(i).GetOutPort().Rect.getX() == ((Rectangle) arg0.getTarget()).getX() && Panel.BlockList.get(i).GetOutPort().Rect.getY() == ((Rectangle) arg0.getTarget()).getY()&& isIn)
                                         {
-                                            if(source.getLink() != null)
+                                            if(source.GetLinks().size() > 0)
                                                 source = null;
                                             else if(source.GetBlock() != Panel.BlockList.get(i).GetOutPort().GetBlock())
                                             {

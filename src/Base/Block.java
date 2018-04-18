@@ -134,7 +134,7 @@ public class Block implements DrawableObject
 		if (block.calculated)
 			return block.value;
 		for (Port port : block.getInPorts()) {
-			Link frontLink = port.getLink();
+			Link frontLink = port.GetFirstLink();
 			if (frontLink != null) {
 				double value = compute(frontLink.getInPort().GetBlock());
 				if (first) {
@@ -168,7 +168,7 @@ public class Block implements DrawableObject
 		if(block == null)
 			return;
 		block.calculated = false;
-		Link link = block._outPort.getLink();
+		Link link = block._outPort.GetFirstLink();
 		if(link== null)
 			return;
 		unsetCalculated(link.getOutPort().GetBlock());
@@ -213,20 +213,22 @@ public class Block implements DrawableObject
 		image.setY(image.getY() + deltaY);
 		debugDisp.setX(debugDisp.getX()+deltaX);
 		debugDisp.setY(debugDisp.getY()+deltaY);
-		if(_outPort.getLink()!= null)
-		{
-			FXMLExampleController.AnchorPanel.getChildren().remove(_outPort.getLink().getLine());
-			_outPort.getLink().getInPort().getLink().Draw(FXMLExampleController.AnchorPanel);
-		}
+		for(int i = 0;i<_outPort.GetLinks().size();i++)
+			if(_outPort.GetLinks().get(i)!= null)
+			{
+				FXMLExampleController.AnchorPanel.getChildren().remove(_outPort.GetLinks().get(i).getLine());
+				_outPort.GetLinks().get(i).Draw(FXMLExampleController.AnchorPanel);
+			}
 		for (Port inport: inPorts)
 		{
 			inport.Rect.setX(inport.Rect.getX()+deltaX);
 			inport.Rect.setY(inport.Rect.getY()+deltaY);
-			if(inport.getLink()!= null)
-			{
-				FXMLExampleController.AnchorPanel.getChildren().remove(inport.getLink().getLine());
-				inport.getLink().Draw(FXMLExampleController.AnchorPanel);
-			}
+			for(int i = 0;i<inport.GetLinks().size();i++)
+				if(inport.GetLinks().get(i)!= null)
+				{
+					FXMLExampleController.AnchorPanel.getChildren().remove(inport.GetLinks().get(i).getLine());
+					inport.GetLinks().get(i).Draw(FXMLExampleController.AnchorPanel);
+				}
 		}
 	}
 
@@ -267,8 +269,11 @@ public class Block implements DrawableObject
 		for (Port p: inPorts)
 		{
 			p.Draw(pane);
-			if(p.GetLink()!= null){
-				p.GetLink().Draw(pane);
+			for (Link link: p.GetLinks()) {
+				if(link!= null)
+				{
+					link.Draw(pane);
+				}
 			}
 		}
 		_outPort.Draw(pane);

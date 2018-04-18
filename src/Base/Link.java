@@ -69,13 +69,16 @@ public class Link implements DrawableObject {
 	{
 		if(inPort == null||outPort== null)
 			return;
-		line.setStartX(inPort.Rect.Center().X+Port.PORT_SIZE/2 +1);
-		line.setStartY(inPort.Rect.Center().Y);
-		line.setEndX(outPort.Rect.Center().X-(Port.PORT_SIZE/2 +1));
-		line.setEndY(outPort.Rect.Center().Y);
-		line.setFill(Color.BLACK);
-		line.setStrokeWidth(3);
-		pane.getChildren().add(line);
+		if(!pane.getChildren().contains(line))
+		{
+			line.setStartX(inPort.Rect.Center().X + Port.PORT_SIZE / 2 + 1);
+			line.setStartY(inPort.Rect.Center().Y);
+			line.setEndX(outPort.Rect.Center().X - (Port.PORT_SIZE / 2 + 1));
+			line.setEndY(outPort.Rect.Center().Y);
+			line.setFill(Color.BLACK);
+			line.setStrokeWidth(3);
+			pane.getChildren().add(line);
+		}
 	}
 
 }

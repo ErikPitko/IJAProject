@@ -129,7 +129,7 @@ public class JUnit
 			for (int j = (int) Math.pow(2, i-1); j < Math.pow(2, i); ++j) {
 				links = new Link[] {new Link(), new Link()};
 				createReverseBlock(EBlock.ADD, links);
-				Link previousLink = blocks.get(j/2).getInPorts().get(((j-1)%2==0) ? 0:1).getLink();
+				Link previousLink = blocks.get(j/2).getInPorts().get(((j-1)%2==0) ? 0:1).GetFirstLink();
 				previousLink.setInPort(blocks.get(j).GetOutPort());
 				blocks.get(j/2).getInPorts().get(((j-1)%2==0) ? 0:1).setLink(previousLink);
 				blocks.get(j).GetOutPort().setLink(previousLink);
@@ -139,7 +139,7 @@ public class JUnit
 			temp = rand.nextDouble() * 50 - 25;
 			blocks.add(new Block(EBlock.IN, new Rect(0, 0, 0, 0), temp));
 			expectedValue += temp;
-			Link previousLink = blocks.get(j/2).getInPorts().get(((j-1)%2==0) ? 0:1).getLink();
+			Link previousLink = blocks.get(j/2).getInPorts().get(((j-1)%2==0) ? 0:1).GetFirstLink();
 			previousLink.setInPort(blocks.get(j).GetOutPort());
 			blocks.get(j/2).getInPorts().get(((j-1)%2==0) ? 0:1).setLink(previousLink);
 			blocks.get(j).GetOutPort().setLink(previousLink);

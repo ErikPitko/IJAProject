@@ -145,11 +145,14 @@ public class FXMLExampleController implements Initializable
                                                 source = null;
                                             else if(source.GetBlock() != Panel.BlockList.get(i).getInPorts().get(y).GetBlock())
                                             {
-                                                System.out.println(source +"  " +Panel.BlockList.get(i).getInPorts().get(y));
                                                 Link l2 = new Link(source, Panel.BlockList.get(i).getInPorts().get(y));
-                                                Block.unsetCalculated(source.GetBlock());
-                                                Block.unsetCalculated(Panel.BlockList.get(i));
                                                 l2.Draw(anch);
+                                                if (Block.isCycled(null, Panel.BlockList.get(i))) {
+                                                	System.err.println("CYCLE !");
+                                                }else {
+                                                	Block.unsetCalculated(source.GetBlock());
+                                                	Block.unsetCalculated(Panel.BlockList.get(i));
+                                                }
                                                 source = null;
                                             }
                                         }
@@ -161,10 +164,13 @@ public class FXMLExampleController implements Initializable
                                             else if(source.GetBlock() != Panel.BlockList.get(i).GetOutPort().GetBlock())
                                             {
                                                 Link l2 = new Link(Panel.BlockList.get(i).GetOutPort(),source);
-                                                Block.unsetCalculated(source.GetBlock());
-                                                Block.unsetCalculated(Panel.BlockList.get(i));
                                                 l2.Draw(anch);
-                                                source = null;
+                                                if (Block.isCycled(null, Panel.BlockList.get(i))) {
+                                                	System.err.println("CYCLE !");
+                                                }else {
+                                                	Block.unsetCalculated(source.GetBlock());
+                                                	Block.unsetCalculated(Panel.BlockList.get(i));
+                                                }source = null;
                                             }
                                         }
                                 }

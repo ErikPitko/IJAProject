@@ -42,7 +42,6 @@ public class Panel extends Application
         
         scene.setOnKeyPressed(arg -> {
         	if(arg.getCode() == KeyCode.ENTER) {
-        		System.out.println("calculate");
         		for(int i = 0; i < Panel.BlockList.size(); i++) {
         			Block.compute(Panel.BlockList.get(i));
         		}

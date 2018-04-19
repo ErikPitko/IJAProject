@@ -129,7 +129,41 @@ public class Block implements DrawableObject
 		return image;
 	}
 	
+	
+	/***
+	 * @brief Recursive searching for loops
+	 * @param comparing Always left null
+	 * @param block Block to be checked for loop in tree
+	 * @returns true if loop is found
+	 */
+	public static boolean isCycled(Block comparing, Block block) {
+			boolean found = false;
+			
+			if(comparing == null) {
+				comparing = block;
+			}else {
+				if(comparing == block)
+					return true;
+			}
+			if(block == null)
+				return found;
+			
+			for (Port port : block.getInPorts()) {
+				Link frontLink = port.GetFirstLink();
+				if (frontLink != null) {
+					found = isCycled(comparing, frontLink.getInPort().GetBlock());
+					if(found)
+						break;
+				}
+			}
+			return found;
+	}
+	
 	public static double compute(Block block) {
+		if(isCycled(null, block)) {
+			System.err.println("CYCLE !");
+			return 0;
+		}
 		boolean first = true;
 		if (block.calculated)
 			return block.value;

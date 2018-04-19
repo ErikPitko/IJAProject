@@ -26,7 +26,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class BlockDialogContoller implements Initializable{
-	
+
 	private static Stage instance;
 	private EBlock buttSelected;
 	
@@ -53,25 +53,25 @@ public class BlockDialogContoller implements Initializable{
 
 	private static Point2D _position;
 
-	public static void CreateBlockDialog(MouseEvent event) {
+	public static void CreateBlockDialog(Point2D position,Point2D clickedPosition) {
 		close();
 		Parent root;
         try {
-            root = FXMLLoader.load(BlockDialogContoller.class.getClassLoader().getResource("Graphics/blockDialog.fxml"));
-            instance = new Stage();
-            instance.setTitle("");
-            instance.setScene(new Scene(root));
-            instance.setX(Panel.getStage().getX() + event.getX());
-            instance.setY(Panel.getStage().getY() + event.getY());
-            instance.initStyle(StageStyle.UNDECORATED);
-            instance.setResizable(false);
-			_position = new Point2D((int)event.getX(),(int)event.getY());
-            instance.show();
+			root = FXMLLoader.load(BlockDialogContoller.class.getClassLoader().getResource("Graphics/blockDialog.fxml"));
+			instance = new Stage();
+			instance.setTitle("");
+			instance.setScene(new Scene(root));
+			instance.setX(position.X);
+			instance.setY(position.Y);
+			instance.initStyle(StageStyle.UNDECORATED);
+			instance.setResizable(false);
+			_position = clickedPosition;
+			instance.show();
         }
         catch (IOException e) {
             e.printStackTrace();
         }
-        
+
 	}
 
 	public static void close() {

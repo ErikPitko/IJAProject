@@ -10,7 +10,9 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 
 import java.net.URL;
@@ -74,15 +76,24 @@ public class FXMLExampleController implements Initializable
         Panel.BlockList.add(bl);
         Panel.BlockList.add(bl1);
         Panel.BlockList.add(bl2);
-        MenuItem item1 = new MenuItem("Ahoj");
-        item1.setOnAction(event -> System.out.println("Ahoj"));
+       /* MenuItem item1 = new MenuItem("Edit");
+        item1.setOnAction(event ->
+        {
+            BlockDialogContoller.CreateBlockDialog(new Point2D(contextMenu.getX(),contextMenu.getY()),new Point2D(blDelete.getRect().getX(),blDelete.getRect().getY()));
+            blDelete = null;
+        });*/
         MenuItem item2 = new MenuItem("Delete");
         item2.setOnAction(event ->
         {
             blDelete.DeleteBlock();
         });
+        MenuItem item3 = new MenuItem("Exit");
+        item3.setOnAction(event ->
+        {
+            contextMenu.hide();
+        });
 
-        contextMenu.getItems().addAll(item1, item2);
+        contextMenu.getItems().addAll(/*item1, */item2,item3);
 
         
         anch.setOnMouseClicked(arg0 ->
@@ -92,20 +103,35 @@ public class FXMLExampleController implements Initializable
                 System.out.println(arg0.getTarget());
         		if ((arg0.getTarget() instanceof AnchorPane))
         		{
-        			BlockDialogContoller.CreateBlockDialog(arg0);
+        			BlockDialogContoller.CreateBlockDialog(new Point2D(arg0.getScreenX(), arg0.getScreenY()),new Point2D(arg0.getX(),arg0.getY()));
         		}
         		else if((arg0.getTarget() instanceof ImageView))
-                {
-                    if(((ImageView) arg0.getTarget()).getFitHeight()!= Port.PORT_SIZE && ((ImageView) arg0.getTarget()).getFitHeight()!= Port.PORT_SIZE)
-                        for (int i = 0;i<Panel.BlockList.size();i++) {
+        		{
+                    if (((ImageView) arg0.getTarget()).getFitHeight() != Port.PORT_SIZE && ((ImageView) arg0.getTarget()).getFitHeight() != Port.PORT_SIZE)
+                    {
+                        for (int i = 0; i < Panel.BlockList.size(); i++)
+                        {
                             if (Panel.BlockList.get(i).getImageView() == arg0.getTarget())
                             {
                                 blDelete = Panel.BlockList.get(i);
                             }
                         }
-
-                    contextMenu.show(((ImageView)arg0.getTarget()), arg0.getScreenX(), arg0.getScreenY());
-                    System.out.println("double click");
+                    }
+                    contextMenu.setX(arg0.getX());
+                    contextMenu.setY(arg0.getY());
+                    contextMenu.show(((ImageView)arg0.getTarget()),arg0.getScreenX(), arg0.getScreenY());
+                }
+                else if((arg0.getTarget() instanceof Line))
+                {
+                    if(arg0.getClickCount() == 2) {
+                        for (int i = 0; i < Panel.BlockList.size(); i++) {
+                            for (int a = 0; a < Panel.BlockList.get(i).GetOutPort().GetLinks().size(); a++) {
+                                if (Panel.BlockList.get(i).GetOutPort().GetLinks().get(a).getLine() == arg0.getTarget()) {
+                                    Panel.BlockList.get(i).GetOutPort().GetLinks().get(a).getOutPort().unSetLink();
+                                }
+                            }
+                        }
+                    }
                 }
         	}
 

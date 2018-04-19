@@ -37,16 +37,16 @@ public class Port implements DrawableObject {
 
     public void unSetLink()
     {
-        for (int i =0;i<_link.size();i++)
+        for (int i =0;i<_link.size();)
         {
-            System.out.println(_link.size());
             Link middle = _link.get(i);
             Port in = middle.getOutPort();
-            in.GetLinks().remove(middle);
-            _link.remove(middle);
+            if(in != null) {
+                in.GetLinks().remove(middle);
+            }
+            this._link.remove(middle);
             FXMLExampleController.AnchorPanel.getChildren().remove(middle.getLine());
             middle.Remove();
-            i--;
         }
     }
 

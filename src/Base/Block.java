@@ -282,7 +282,6 @@ public class Block implements DrawableObject
 		for (int i = 0; i < _outPort.GetLinks().size();i++)
 		{
 			unsetCalculated(_outPort.GetBlock());
-			//FXMLExampleController.AnchorPanel.getChildren().remove(_outPort.GetLinks().get(i).getLine());
 			_outPort.unSetLink();
 		}
 		FXMLExampleController.AnchorPanel.getChildren().remove(_outPort.Rect);

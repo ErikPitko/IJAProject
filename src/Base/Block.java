@@ -169,8 +169,9 @@ public class Block implements DrawableObject
 			return;
 		block.calculated = false;
 		Link link = block._outPort.GetFirstLink();
-		if(link== null)
+		if(link== null || link.getOutPort() == null )
 			return;
+		System.out.println(link.getOutPort());
 		unsetCalculated(link.getOutPort().GetBlock());
 	}
 
@@ -213,6 +214,11 @@ public class Block implements DrawableObject
 		image.setY(image.getY() + deltaY);
 		debugDisp.setX(debugDisp.getX()+deltaX);
 		debugDisp.setY(debugDisp.getY()+deltaY);
+		if(disp != null)
+		{
+			disp.setX(disp.getX() + deltaX);
+			disp.setY(disp.getY() + deltaY);
+		}
 		for(int i = 0;i<_outPort.GetLinks().size();i++)
 			if(_outPort.GetLinks().get(i)!= null)
 			{
@@ -229,6 +235,27 @@ public class Block implements DrawableObject
 					FXMLExampleController.AnchorPanel.getChildren().remove(inport.GetLinks().get(i).getLine());
 					inport.GetLinks().get(i).Draw(FXMLExampleController.AnchorPanel);
 				}
+		}
+	}
+
+	public void DeleteBlock()
+	{
+		FXMLExampleController.AnchorPanel.getChildren().remove(_rect);
+		FXMLExampleController.AnchorPanel.getChildren().remove(image);
+		FXMLExampleController.AnchorPanel.getChildren().remove(debugDisp);
+		if(disp != null)
+			FXMLExampleController.AnchorPanel.getChildren().remove(disp);
+		for (int i = 0; i < _outPort.GetLinks().size();i++)
+		{
+			unsetCalculated(_outPort.GetBlock());
+			//FXMLExampleController.AnchorPanel.getChildren().remove(_outPort.GetLinks().get(i).getLine());
+			_outPort.unSetLink();
+		}
+		FXMLExampleController.AnchorPanel.getChildren().remove(_outPort.Rect);
+		for (int i = 0; i < inPorts.size();i++)
+		{
+			inPorts.get(i).unSetLink();
+			FXMLExampleController.AnchorPanel.getChildren().remove(inPorts.get(i).Rect);
 		}
 	}
 

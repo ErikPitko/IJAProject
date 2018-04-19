@@ -13,6 +13,7 @@ public class Link implements DrawableObject {
 	private Port inPort;
 	private Port outPort;
 	private Line line;
+
 	public LineMesh getLinkMesh() {
 		return mesh;
 	}
@@ -36,16 +37,17 @@ public class Link implements DrawableObject {
 		setInPort(inPort);
 		setOutPort(outPort);
 	}
-	
+
 	public Port getInPort() {
 		return inPort;
 	}
 
 	public void setInPort(Port inPort) {
-		if (this.outPort != null)
+		if (this.outPort != null && inPort != null)
 			Block.unsetCalculated(outPort.GetBlock());
 		this.inPort = inPort;
-		inPort.setLink(this);
+		if (inPort != null)
+			inPort.setLink(this);
 	}
 
 	public Port getOutPort() {
@@ -53,15 +55,21 @@ public class Link implements DrawableObject {
 	}
 
 	public void setOutPort(Port outPort) {
-		if (this.outPort != null)
+		if (this.outPort != null && outPort != null)
 			Block.unsetCalculated(outPort.GetBlock());
 		this.outPort = outPort;
-		outPort.setLink(this);
+		if (outPort != null)
+			outPort.setLink(this);
 	}
 
-	public Line getLine()
-	{
+	public Line getLine() {
 		return line;
+	}
+
+	public void Remove()
+	{
+		outPort = null;
+		inPort = null;
 	}
 
 	@Override

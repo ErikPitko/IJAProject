@@ -1,6 +1,7 @@
 package Base;
 
 import Graphics.DrawableObject;
+import Graphics.FXMLExampleController;
 import Graphics.Rect;
 import javafx.scene.Node;
 import javafx.scene.canvas.GraphicsContext;
@@ -30,7 +31,23 @@ public class Port implements DrawableObject {
     }
 
     public void setLink(Link link) {
-        this._link.add(link);
+        if(!_link.contains(link))
+            this._link.add(link);
+    }
+
+    public void unSetLink()
+    {
+        for (int i =0;i<_link.size();i++)
+        {
+            System.out.println(_link.size());
+            Link middle = _link.get(i);
+            Port in = middle.getOutPort();
+            in.GetLinks().remove(middle);
+            _link.remove(middle);
+            FXMLExampleController.AnchorPanel.getChildren().remove(middle.getLine());
+            middle.Remove();
+            i--;
+        }
     }
 
     public Block GetBlock()

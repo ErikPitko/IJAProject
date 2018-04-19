@@ -1,22 +1,21 @@
 package Graphics;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
 import Base.Block;
 import Base.EBlock;
 import Base.Link;
 import Base.Port;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
-import jdk.nashorn.internal.ir.BlockLexicalContext;
-import sun.security.util.PendingException;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class FXMLExampleController implements Initializable
 {
@@ -28,6 +27,8 @@ public class FXMLExampleController implements Initializable
     private boolean isIn;
     private Point2D startDrag;
     private Block startDragBlock;
+    private Block blDelete;
+    private static final ContextMenu contextMenu = new ContextMenu();
     
     public static void onClose() {
     	BlockDialogContoller.close();
@@ -73,6 +74,16 @@ public class FXMLExampleController implements Initializable
         Panel.BlockList.add(bl);
         Panel.BlockList.add(bl1);
         Panel.BlockList.add(bl2);
+        MenuItem item1 = new MenuItem("Ahoj");
+        item1.setOnAction(event -> System.out.println("Ahoj"));
+        MenuItem item2 = new MenuItem("Delete");
+        item2.setOnAction(event ->
+        {
+            blDelete.DeleteBlock();
+        });
+
+        contextMenu.getItems().addAll(item1, item2);
+
         
         anch.setOnMouseClicked(arg0 ->
         {
@@ -83,6 +94,19 @@ public class FXMLExampleController implements Initializable
         		{
         			BlockDialogContoller.CreateBlockDialog(arg0);
         		}
+        		else if((arg0.getTarget() instanceof ImageView))
+                {
+                    if(((ImageView) arg0.getTarget()).getFitHeight()!= Port.PORT_SIZE && ((ImageView) arg0.getTarget()).getFitHeight()!= Port.PORT_SIZE)
+                        for (int i = 0;i<Panel.BlockList.size();i++) {
+                            if (Panel.BlockList.get(i).getImageView() == arg0.getTarget())
+                            {
+                                blDelete = Panel.BlockList.get(i);
+                            }
+                        }
+
+                    contextMenu.show(((ImageView)arg0.getTarget()), arg0.getScreenX(), arg0.getScreenY());
+                    System.out.println("double click");
+                }
         	}
 
                 if (arg0.getButton().equals(MouseButton.PRIMARY))
@@ -121,9 +145,10 @@ public class FXMLExampleController implements Initializable
                                                 source = null;
                                             else if(source.GetBlock() != Panel.BlockList.get(i).getInPorts().get(y).GetBlock())
                                             {
-                                            	Block.unsetCalculated(source.GetBlock());
-                                            	Block.unsetCalculated(Panel.BlockList.get(i));
+                                                System.out.println(source +"  " +Panel.BlockList.get(i).getInPorts().get(y));
                                                 Link l2 = new Link(source, Panel.BlockList.get(i).getInPorts().get(y));
+                                                Block.unsetCalculated(source.GetBlock());
+                                                Block.unsetCalculated(Panel.BlockList.get(i));
                                                 l2.Draw(anch);
                                                 source = null;
                                             }
@@ -135,9 +160,9 @@ public class FXMLExampleController implements Initializable
                                                 source = null;
                                             else if(source.GetBlock() != Panel.BlockList.get(i).GetOutPort().GetBlock())
                                             {
-                                            	Block.unsetCalculated(source.GetBlock());
-                                            	Block.unsetCalculated(Panel.BlockList.get(i));
                                                 Link l2 = new Link(Panel.BlockList.get(i).GetOutPort(),source);
+                                                Block.unsetCalculated(source.GetBlock());
+                                                Block.unsetCalculated(Panel.BlockList.get(i));
                                                 l2.Draw(anch);
                                                 source = null;
                                             }
@@ -147,13 +172,12 @@ public class FXMLExampleController implements Initializable
 
                             }
                     }
-                    else source = null;
-                    /*
-                    if(arg0.getClickCount() == 2)
-                    {
+                        else source = null;
 
-                    }
-                    */
+                }
+                else if(arg0.getTarget() instanceof ImageView)
+                {
+                    source = null;
                 }
             }
         });

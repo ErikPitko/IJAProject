@@ -8,11 +8,16 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Link implements DrawableObject {
 	private LineMesh mesh;
 	private Port inPort;
 	private Port outPort;
 	private Line line;
+	private boolean isCycled;
+	private static List<Line> cycledLinks = new ArrayList<>();
 
 	public LineMesh getLinkMesh() {
 		return mesh;
@@ -21,6 +26,7 @@ public class Link implements DrawableObject {
 	public Link() {
 		super();
 		line = new Line();
+		isCycled = false;
 	}
 
 	public Link(Port inPort, Port outPort) {
@@ -28,6 +34,7 @@ public class Link implements DrawableObject {
 		setInPort(inPort);
 		line = new Line();
 		setOutPort(outPort);
+		isCycled = false;
 	}
 
 	public Link(Port inPort, Port outPort, LineMesh mesh) {
@@ -36,6 +43,7 @@ public class Link implements DrawableObject {
 		line = new Line();
 		setInPort(inPort);
 		setOutPort(outPort);
+		isCycled = false;
 	}
 
 	public Port getInPort() {
@@ -72,6 +80,22 @@ public class Link implements DrawableObject {
 		inPort = null;
 	}
 
+	public boolean IsCycled()
+	{
+		return isCycled;
+	}
+
+	public void SetCycled()
+	{
+		isCycled = true;
+		cycledLinks.add(line);
+	}
+
+	public void UnSetCycled()
+	{
+		isCycled = false;
+		cycledLinks.remove(line);
+	}
 	@Override
 	public void Draw(AnchorPane pane)
 	{
@@ -83,7 +107,9 @@ public class Link implements DrawableObject {
 			line.setStartY(inPort.Rect.Center().Y);
 			line.setEndX(outPort.Rect.Center().X - (Port.PORT_SIZE / 2 + 1));
 			line.setEndY(outPort.Rect.Center().Y);
-			line.setFill(Color.BLACK);
+			if(isCycled)
+				line.setStroke(Color.RED);
+			else line.setStroke(Color.BLACK);
 			line.setStrokeWidth(3);
 			pane.getChildren().add(line);
 		}

@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 
 import Base.Block;
 import Base.EBlock;
+import Base.Port;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -137,7 +138,7 @@ public class BlockDialogContoller implements Initializable{
 				if (buttSelected == EBlock.IN)
 					block = new Block(buttSelected, new Rect(_position,100,100), Double.parseDouble(Value.getText()));
 				else 
-					block = new Block(buttSelected, new Rect(_position,100,100));
+					block = new Block(buttSelected, new Rect(_position,100,InputSlider.getValue()* (Port.PORT_SIZE+5)));
 				for(int i = 0; i < InputSlider.getValue(); i++)
 					block.genInPort();
 				Panel.BlockList.add(block);

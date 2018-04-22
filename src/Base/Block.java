@@ -27,7 +27,8 @@ public class Block implements DrawableObject
 	private Port _outPort;
 	private double value = 0;
 	private boolean calculated = false;
-	
+	public static final int MINBLOCKSIZE = 100;
+	public static final int MAXBLOCKSIZE = 400;
 	private Text debugDisp;
 	private Text disp;
 
@@ -279,8 +280,11 @@ public class Block implements DrawableObject
 
 	public void Resize(double deltaX,double deltaY)
 	{
-		_rect.setWidth(_rect.getWidth()+deltaX);
-		_rect.setHeight(_rect.getHeight()+deltaY);
+		if(_rect.getWidth() + deltaX > MINBLOCKSIZE  && _rect.getWidth()+deltaX < MAXBLOCKSIZE)
+			_rect.setWidth(_rect.getWidth()+deltaX);
+		if(_rect.getHeight()+deltaY >= inPorts.size()*(Port.PORT_SIZE+5))
+			if(_rect.getHeight() + deltaY > MINBLOCKSIZE && _rect.getHeight()+deltaY < MAXBLOCKSIZE)
+				_rect.setHeight(_rect.getHeight()+deltaY);
 		_resizeRect.setX(_rect.XMax()-8);
 		_resizeRect.setY(_rect.YMax()-8);
 		debugDisp.setX(_rect.getX() + _rect.getWidth() - debugDisp.getBoundsInLocal().getWidth());
@@ -291,7 +295,7 @@ public class Block implements DrawableObject
 			disp.setY(_rect.Center().Y + 5);
 		}
 		CalculatePortsToMiddle();
-		_outPort.Rect.setX(_outPort.Rect.getX()+deltaX);
+		_outPort.Rect.setX(_rect.XMax()-Port.PORT_SIZE-5);
 		_outPort.Rect.setY(_rect.Center().Y-Port.PORT_SIZE/2);
 		for (Link outLinks: _outPort.GetLinks()) {
 			outLinks.getLine().setStartX(_outPort.Rect.Center().X+Port.PORT_SIZE/2);
@@ -305,7 +309,6 @@ public class Block implements DrawableObject
 				inLinks.getLine().setEndX(inport.Rect.Center().X-Port.PORT_SIZE/2);
 				inLinks.getLine().setEndY(inport.Rect.Center().Y);
 			}
-			inport.Rect.setY(inport.Rect.getY()+deltaY);
 		}
 		image.setFitWidth(_rect.getWidth());
 		image.setFitHeight(_rect.getHeight());
@@ -329,6 +332,7 @@ public class Block implements DrawableObject
 			inPorts.get(i).unSetLink();
 			FXMLExampleController.AnchorPanel.getChildren().remove(inPorts.get(i).Rect);
 		}
+		FXMLExampleController.AnchorPanel.getChildren().remove(_resizeRect);
 	}
 
     @Override

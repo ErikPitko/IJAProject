@@ -47,6 +47,7 @@ public class FXMLExampleController implements Initializable
     private Block startDragBlock;
     private Block blDelete;
     private boolean isBackgroundMove;
+    private Block resizeBlock;
 
     private static final ContextMenu contextMenu = new ContextMenu();
     
@@ -271,7 +272,7 @@ public class FXMLExampleController implements Initializable
                                 }
                             }
                     }
-                        else source = null;
+                    else source = null;
                 }
                 else if((arg0.getTarget() instanceof Line))
                 {
@@ -308,10 +309,22 @@ public class FXMLExampleController implements Initializable
                             }
                         }
                 }
-                if ((event.getTarget() instanceof AnchorPane))
+                else if ((event.getTarget() instanceof AnchorPane))
                 {
                     startDrag = new Point2D((int) event.getX(), (int) event.getY());
                     isBackgroundMove = true;
+                }
+                else if(((Rectangle)event.getTarget()).getWidth()== 8 && ((Rectangle) event.getTarget()).getHeight()== 8)
+                {
+                    for (Block tmpBlock:Panel.BlockList)
+                    {
+                        if(tmpBlock.GetResizeRect() == (Rectangle)event.getTarget())
+                        {
+                            System.out.println("aaa");
+                            resizeBlock = tmpBlock;
+                            startDrag = new Point2D((int) event.getX(), (int) event.getY());
+                        }
+                    }
                 }
             }
         });
@@ -332,6 +345,14 @@ public class FXMLExampleController implements Initializable
                 {
                     blo.Move(deltaX,deltaY);
                 }
+                startDrag = new Point2D((int) event.getX(), (int) event.getY());
+            }
+            else if(resizeBlock != null)
+            {
+                System.out.println("RESIZE");
+                double deltaX = -Point2D.Vector(new Point2D(event.getX(), event.getY()), startDrag).X;
+                double deltaY = -Point2D.Vector(new Point2D(event.getX(), event.getY()), startDrag).Y;
+                resizeBlock.Resize(deltaX,deltaY);
                 startDrag = new Point2D((int) event.getX(), (int) event.getY());
             }
         });

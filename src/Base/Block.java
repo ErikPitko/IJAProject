@@ -21,6 +21,7 @@ public class Block implements DrawableObject
 {
     private EBlock _eBlock;
     private Rect _rect;
+    private Rect _resizeRect;
     private ImageView image;
     private ArrayList<Port> inPorts = new ArrayList<Port>();
 	private Port _outPort;
@@ -219,6 +220,8 @@ public class Block implements DrawableObject
 		return value;
 	}
 
+	public Rect GetResizeRect(){return _resizeRect;}
+
 	public EBlock getType() {
 		return _eBlock;
 	}
@@ -242,6 +245,8 @@ public class Block implements DrawableObject
 	{
 		_rect.setX(_rect.getX() + deltaX);
 		_rect.setY(_rect.getY() + deltaY);
+		_resizeRect.setX(_resizeRect.getX() + deltaX);
+		_resizeRect.setY(_resizeRect.getY() + deltaY);
 		_outPort.Rect.setX(_outPort.Rect.getX()+deltaX);
 		_outPort.Rect.setY(_outPort.Rect.getY()+deltaY);
 		image.setX(image.getX() + deltaX);
@@ -270,6 +275,40 @@ public class Block implements DrawableObject
 					inport.GetLinks().get(i).Draw(FXMLExampleController.AnchorPanel);
 				}
 		}
+	}
+
+	public void Resize(double deltaX,double deltaY)
+	{
+		_rect.setWidth(_rect.getWidth()+deltaX);
+		_rect.setHeight(_rect.getHeight()+deltaY);
+		_resizeRect.setX(_rect.XMax()-8);
+		_resizeRect.setY(_rect.YMax()-8);
+		debugDisp.setX(_rect.getX() + _rect.getWidth() - debugDisp.getBoundsInLocal().getWidth());
+		debugDisp.setY(_rect.getY() - 5);
+		if(disp != null)
+		{
+			disp.setX(_rect.Center().X - disp.getBoundsInLocal().getWidth() / 2);
+			disp.setY(_rect.Center().Y + 5);
+		}
+		CalculatePortsToMiddle();
+		_outPort.Rect.setX(_outPort.Rect.getX()+deltaX);
+		_outPort.Rect.setY(_rect.Center().Y-Port.PORT_SIZE/2);
+		for (Link outLinks: _outPort.GetLinks()) {
+			outLinks.getLine().setStartX(_outPort.Rect.Center().X+Port.PORT_SIZE/2);
+			outLinks.getLine().setStartY(_outPort.Rect.Center().Y);
+		}
+
+		for (Port inport: inPorts)
+		{
+			for (Link inLinks: inport.GetLinks())
+			{
+				inLinks.getLine().setEndX(inport.Rect.Center().X-Port.PORT_SIZE/2);
+				inLinks.getLine().setEndY(inport.Rect.Center().Y);
+			}
+			inport.Rect.setY(inport.Rect.getY()+deltaY);
+		}
+		image.setFitWidth(_rect.getWidth());
+		image.setFitHeight(_rect.getHeight());
 	}
 
 	public void DeleteBlock()
@@ -325,7 +364,10 @@ public class Block implements DrawableObject
 			pane.getChildren().addAll(_rect, image, debugDisp, disp);
 		}else
 			pane.getChildren().addAll(_rect, image, debugDisp);
-		
+		_resizeRect = new Rect(_rect.XMax()-8,_rect.YMax()-8,8,8);
+		_resizeRect.setFill(Color.WHITE);
+		_resizeRect.setStroke(Color.BLACK);
+		pane.getChildren().add(_resizeRect);
 		for (Port p: inPorts)
 		{
 			p.Draw(pane);

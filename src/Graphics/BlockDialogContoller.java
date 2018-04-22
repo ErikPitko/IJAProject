@@ -45,6 +45,8 @@ public class BlockDialogContoller implements Initializable{
 	@FXML
 	private Button Apply;
 	@FXML
+	private Button Cancel;
+	@FXML
 	private Label ValueLabel;
 	@FXML
 	private TextField Value;
@@ -122,6 +124,11 @@ public class BlockDialogContoller implements Initializable{
 		            Value.setText(newValue.replaceAll("[^\\d.]", ""));
 		        }
 		    }
+		});
+
+		Cancel.setOnMouseClicked(event ->
+		{
+			close();
 		});
 		
 		Apply.setOnMouseClicked(event->{

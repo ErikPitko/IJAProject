@@ -12,6 +12,7 @@ import Graphics.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -296,17 +297,35 @@ public class Block implements DrawableObject, Serializable
 
 	public void Resize(double deltaX,double deltaY)
 	{
-		boolean anyIntersects;
+		boolean anyIntersects = false;
 		if(_rect.getWidth() + deltaX > MINBLOCKSIZE  && _rect.getWidth()+deltaX < MAXBLOCKSIZE)
 		{
-
-			_rect.setWidth(_rect.getWidth() + deltaX);
-			//System.out.println("intersects");
+			for(int i =0 ;i< Panel.BlockList.size();i++)
+			{
+				if (Panel.BlockList.get(i) != this)
+					if (new Rect(_rect.getX(),_rect.getY(),_rect.getWidth()+deltaX,_rect.getHeight()).Intersect(Panel.BlockList.get(i).getRect()))
+						anyIntersects = true;
+				if(anyIntersects == true)
+					break;
+			}
+			if(!anyIntersects)
+				_rect.setWidth(_rect.getWidth() + deltaX);
 		}
-
+		anyIntersects = false;
 		if(_rect.getHeight()+deltaY >= inPorts.size()*(Port.PORT_SIZE+5))
 			if(_rect.getHeight() + deltaY > MINBLOCKSIZE && _rect.getHeight()+deltaY < MAXBLOCKSIZE)
-				_rect.setHeight(_rect.getHeight()+deltaY);
+			{
+				for(int i =0 ;i< Panel.BlockList.size();i++)
+				{
+					if (Panel.BlockList.get(i) != this)
+						if (new Rect(_rect.getX(),_rect.getY(),_rect.getWidth(),_rect.getHeight()+deltaY).Intersect(Panel.BlockList.get(i).getRect()))
+							anyIntersects = true;
+					if(anyIntersects == true)
+						break;
+				}
+				if(!anyIntersects)
+					_rect.setHeight(_rect.getHeight() + deltaY);
+			}
 		_resizeRect.setX(_rect.XMax()-8);
 		_resizeRect.setY(_rect.YMax()-8);
 		debugDisp.setX(_rect.getX() + _rect.getWidth() - debugDisp.getBoundsInLocal().getWidth());

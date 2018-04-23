@@ -17,6 +17,11 @@
                   <MenuItem fx:id="_exitComponent" mnemonicParsing="false" text="Exit" />
             </items>
           </Menu>
+            <Menu mnemonicParsing="false" text="Edit">
+               <items>
+                  <MenuItem fx:id="_clearComponent" mnemonicParsing="false" text="Clear" />
+               </items>
+            </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
               <MenuItem fx:id="_aboutComponent" mnemonicParsing="false" text="About" />

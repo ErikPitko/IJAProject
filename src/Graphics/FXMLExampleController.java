@@ -23,6 +23,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
@@ -40,6 +41,8 @@ public class FXMLExampleController implements Initializable
     private MenuItem _exitComponent;
     @FXML
     private MenuItem _aboutComponent;
+    @FXML
+    private MenuItem _clearComponent;
     @FXML
     private Label _errorLog;
 
@@ -162,6 +165,11 @@ public class FXMLExampleController implements Initializable
             alert.setHeaderText(null);
             alert.setContentText("This program was made by Adam Petráš and Erik Pitko 2018.");
             alert.showAndWait();
+        });
+        _clearComponent.setOnAction(event ->
+        {
+            Panel.ClearAllBlocks();
+
         });
 
         _exitComponent.setOnAction(event ->

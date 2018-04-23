@@ -22,6 +22,13 @@ public class Panel extends Application
     public static Stage getStage() {
 		return stage;
 	}
+
+    public static void ClearAllBlocks()
+    {
+        int size = Panel.BlockList.size();
+        for (int i =0;i<size;i++)
+            Panel.BlockList.get(0).DeleteBlock();
+    }
     
 	@Override
     public void start(Stage primaryStage) throws Exception

@@ -77,9 +77,11 @@ public class Panel extends Application
                 }
                 if(outBlock != null) {
                     stepCounter++;
-                    Block.unsetCalculated(outBlock);
+                    //Block.unsetCalculated(outBlock);
                     Block.compute(outBlock);
                 }
+                if(Panel.stepCounter > Block.stepCounter)
+                    Panel.stepCounter = 0;
             }
         });
         

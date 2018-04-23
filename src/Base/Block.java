@@ -197,8 +197,6 @@ public class Block implements DrawableObject, Serializable
 					image.setCacheHint(CacheHint.SPEED);
 
 				}
-
-				System.out.println(Block.stepCounter);
 				if (first) {
 					first = false;
 					block.setValue(value);
@@ -233,6 +231,8 @@ public class Block implements DrawableObject, Serializable
 			return;
 		if(block.getType() == EBlock.IN)
 			return;
+		Panel.stepCounter = 0;
+		Block.stepCounter = 0;
 		block.calculated = false;
 		block.setValue(0);
 		if(block._outPort== null)

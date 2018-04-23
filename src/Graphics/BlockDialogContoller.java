@@ -128,8 +128,9 @@ public class BlockDialogContoller implements Initializable{
 		    @Override
 		    public void changed(ObservableValue<? extends String> observable, String oldValue, 
 		        String newValue) {
-		        if (!newValue.matches("\\d.*")) {
-		            Value.setText(newValue.replaceAll("[^\\d.]", ""));
+		        if (!newValue.matches("^(\\d+(\\.?)\\d*)$")) {
+		        	if(newValue.length() > 0)
+		        		Value.setText(newValue.substring(0, newValue.length() - 1));
 		        }
 		    }
 		});

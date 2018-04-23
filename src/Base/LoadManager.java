@@ -49,8 +49,8 @@ public class LoadManager
 	}
 	
 	public static void loadScene(File file) throws IOException, ClassNotFoundException {
-		for (Block block : Panel.BlockList)
-			block.DeleteBlock();
+		for (int i = 0; i < Panel.BlockList.size(); i++)
+			Panel.BlockList.get(i).DeleteBlock();
 		Panel.BlockList.clear();
 		FileInputStream fin = new FileInputStream(file);
 		ObjectInputStream ois = new ObjectInputStream(fin);

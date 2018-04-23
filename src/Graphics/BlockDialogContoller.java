@@ -145,6 +145,8 @@ public class BlockDialogContoller implements Initializable{
 				Block block;
 				if (buttSelected == EBlock.IN)
 					block = new Block(buttSelected, new Rect(_position, 100, 100), Double.parseDouble(Value.getText()));
+                else if (buttSelected == EBlock.OUT)
+                    block = new Block(buttSelected, new Rect(_position, 100, 100), Double.parseDouble(Value.getText()));
 				else {
 					double sizey = InputSlider.getValue() * (Port.PORT_SIZE + 5);
 					if (sizey < Block.MINBLOCKSIZE)
@@ -156,10 +158,11 @@ public class BlockDialogContoller implements Initializable{
 
 				if(editBlock!= null)
 				{
-					for (int i = 0; i < editBlock.GetOutPort().GetLinks().size();i++)
-					{
-						new Link(block.GetOutPort(),editBlock.GetOutPort().GetLinks().get(i).getOutPort());
-					}
+				    if(editBlock.GetOutPort()!= null)
+                        for (int i = 0; i < editBlock.GetOutPort().GetLinks().size();i++)
+                        {
+                            new Link(block.GetOutPort(),editBlock.GetOutPort().GetLinks().get(i).getOutPort());
+                        }
 					for (int i = 0; i < editBlock.getInPorts().size();i++)
 					{
 						if(i == block.getInPorts().size())

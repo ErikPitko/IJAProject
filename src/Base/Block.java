@@ -9,11 +9,15 @@ import java.util.Collections;
 import java.util.List;
 
 import Graphics.*;
+import Graphics.Panel;
+import javafx.scene.CacheHint;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -34,6 +38,7 @@ public class Block implements DrawableObject, Serializable
 	private transient boolean calculated = false;
 	public static final int MINBLOCKSIZE = 100;
 	public static final int MAXBLOCKSIZE = 400;
+	public static int stepCounter = 0;
 	private transient Text debugDisp;
 	private transient Text disp;
 	
@@ -41,7 +46,8 @@ public class Block implements DrawableObject, Serializable
 		super();
 		this._eBlock = eBlock;
 		this._rect = rect;
-		_outPort = new Port(new Rect(_rect.XMax()-(Port.PORT_SIZE+Port.PORT_SIZE/2),_rect.getY()+_rect.getHeight()/2-Port.PORT_SIZE/2,Port.PORT_SIZE,Port.PORT_SIZE),this,Color.RED);
+		if(eBlock!= EBlock.OUT)
+			_outPort = new Port(new Rect(_rect.XMax()-(Port.PORT_SIZE+Port.PORT_SIZE/2),_rect.getY()+_rect.getHeight()/2-Port.PORT_SIZE/2,Port.PORT_SIZE,Port.PORT_SIZE),this,Color.RED);
 	}
 
 	public Block(EBlock eBlock, Rect rect, double value) {
@@ -49,7 +55,8 @@ public class Block implements DrawableObject, Serializable
 		this._eBlock = eBlock;
 		this._rect = rect;
 		this.value = value;
-		_outPort = new Port(new Rect(_rect.XMax()-(Port.PORT_SIZE+Port.PORT_SIZE/2),_rect.getY()+_rect.getHeight()/2-Port.PORT_SIZE/2,Port.PORT_SIZE,Port.PORT_SIZE),this,Color.RED);
+		if(eBlock!= EBlock.OUT)
+			_outPort = new Port(new Rect(_rect.XMax()-(Port.PORT_SIZE+Port.PORT_SIZE/2),_rect.getY()+_rect.getHeight()/2-Port.PORT_SIZE/2,Port.PORT_SIZE,Port.PORT_SIZE),this,Color.RED);
 	}
 
 	private void CalculatePortsToMiddle() {
@@ -177,6 +184,21 @@ public class Block implements DrawableObject, Serializable
 			Link frontLink = port.GetFirstLink();
 			if (frontLink != null) {
 				double value = compute(frontLink.getInPort().GetBlock());
+				if(Block.stepCounter == Panel.stepCounter) {
+					return value;
+				}
+				else
+				{
+					ImageView image = block.getImageView();
+					ColorAdjust blackout = new ColorAdjust();
+					blackout.setBrightness(-0.5);
+					image.setEffect(blackout);
+					image.setCache(true);
+					image.setCacheHint(CacheHint.SPEED);
+
+				}
+
+				System.out.println(Block.stepCounter);
 				if (first) {
 					first = false;
 					block.setValue(value);
@@ -200,6 +222,8 @@ public class Block implements DrawableObject, Serializable
 				}
 			}
 		}
+		if(block.getType()!= EBlock.IN)
+			Block.stepCounter++;
 		block.calculated = true;
 		return block.value;
 	}
@@ -207,12 +231,18 @@ public class Block implements DrawableObject, Serializable
 	public static void unsetCalculated(Block block) {
 		if(block == null)
 			return;
-		block.calculated = false;
-		Link link = block._outPort.GetFirstLink();
-		if(link== null || link.getOutPort() == null )
+		if(block.getType() == EBlock.IN)
 			return;
-		System.out.println(link.getOutPort());
-		unsetCalculated(link.getOutPort().GetBlock());
+		block.calculated = false;
+		block.setValue(0);
+		if(block._outPort== null)
+			return;
+		for(int i= 0;i<block._outPort.GetLinks().size();i++) {
+			Link link = block._outPort.GetLinks().get(i);
+			if (link == null || link.getOutPort() == null)
+				return;
+			unsetCalculated(link.getOutPort().GetBlock());
+		}
 	}
 
 	public ArrayList<Port> getInPorts() {
@@ -265,8 +295,10 @@ public class Block implements DrawableObject, Serializable
 		_rect.setY(_rect.getY() + deltaY);
 		_resizeRect.setX(_resizeRect.getX() + deltaX);
 		_resizeRect.setY(_resizeRect.getY() + deltaY);
-		_outPort.Rect.setX(_outPort.Rect.getX()+deltaX);
-		_outPort.Rect.setY(_outPort.Rect.getY()+deltaY);
+		if(_outPort != null) {
+			_outPort.Rect.setX(_outPort.Rect.getX() + deltaX);
+			_outPort.Rect.setY(_outPort.Rect.getY() + deltaY);
+		}
 		image.setX(image.getX() + deltaX);
 		image.setY(image.getY() + deltaY);
 		debugDisp.setX(debugDisp.getX()+deltaX);
@@ -276,12 +308,13 @@ public class Block implements DrawableObject, Serializable
 			disp.setX(disp.getX() + deltaX);
 			disp.setY(disp.getY() + deltaY);
 		}
-		for(int i = 0;i<_outPort.GetLinks().size();i++)
-			if(_outPort.GetLinks().get(i)!= null)
-			{
-				FXMLExampleController.AnchorPanel.getChildren().remove(_outPort.GetLinks().get(i).getLine());
-				_outPort.GetLinks().get(i).Draw(FXMLExampleController.AnchorPanel);
-			}
+		if(_outPort != null)
+			for(int i = 0;i<_outPort.GetLinks().size();i++)
+				if(_outPort.GetLinks().get(i)!= null)
+				{
+					FXMLExampleController.AnchorPanel.getChildren().remove(_outPort.GetLinks().get(i).getLine());
+					_outPort.GetLinks().get(i).Draw(FXMLExampleController.AnchorPanel);
+				}
 		for (Port inport: inPorts)
 		{
 			inport.Rect.setX(inport.Rect.getX()+deltaX);
@@ -336,11 +369,14 @@ public class Block implements DrawableObject, Serializable
 			disp.setY(_rect.Center().Y + 5);
 		}
 		CalculatePortsToMiddle();
-		_outPort.Rect.setX(_rect.XMax()-Port.PORT_SIZE-5);
-		_outPort.Rect.setY(_rect.Center().Y-Port.PORT_SIZE/2);
-		for (Link outLinks: _outPort.GetLinks()) {
-			outLinks.getLine().setStartX(_outPort.Rect.Center().X+Port.PORT_SIZE/2);
-			outLinks.getLine().setStartY(_outPort.Rect.Center().Y);
+		if(_outPort!= null)
+		{
+			_outPort.Rect.setX(_rect.XMax() - Port.PORT_SIZE - 5);
+			_outPort.Rect.setY(_rect.Center().Y - Port.PORT_SIZE / 2);
+			for (Link outLinks : _outPort.GetLinks()) {
+				outLinks.getLine().setStartX(_outPort.Rect.Center().X + Port.PORT_SIZE / 2);
+				outLinks.getLine().setStartY(_outPort.Rect.Center().Y);
+			}
 		}
 
 		for (Port inport: inPorts)
@@ -362,12 +398,14 @@ public class Block implements DrawableObject, Serializable
 		FXMLExampleController.AnchorPanel.getChildren().remove(debugDisp);
 		if(disp != null)
 			FXMLExampleController.AnchorPanel.getChildren().remove(disp);
-		for (int i = 0; i < _outPort.GetLinks().size();i++)
+		if(_outPort!= null)
 		{
-			unsetCalculated(_outPort.GetBlock());
-			_outPort.unSetLink();
+			for (int i = 0; i < _outPort.GetLinks().size(); i++) {
+				unsetCalculated(_outPort.GetBlock());
+				_outPort.unSetLink();
+			}
+			FXMLExampleController.AnchorPanel.getChildren().remove(_outPort.Rect);
 		}
-		FXMLExampleController.AnchorPanel.getChildren().remove(_outPort.Rect);
 		for (int i = 0; i < inPorts.size();i++)
 		{
 			inPorts.get(i).unSetLink();
@@ -380,13 +418,11 @@ public class Block implements DrawableObject, Serializable
     @Override
     public void Draw(AnchorPane pane)
     {
-		
 		image = new ImageView(new Image(getClass().getResourceAsStream("/Res/"+_eBlock.toString()+".png")));
 		image.setFitHeight(_rect.getHeight());
 		image.setFitWidth(_rect.getWidth());
 		image.setX(_rect.getX());
 		image.setY(_rect.getY());
-		
 		Font font = null;
 		try {
 			font = Font.loadFont(new FileInputStream(new File("src/Res/fonts/Crasns.ttf")), 15);
@@ -395,7 +431,7 @@ public class Block implements DrawableObject, Serializable
 		}
 		
 		debugDisp = new Text(String.valueOf(value));
-		debugDisp.setFont(font);
+		//debugDisp.setFont(font);
 		debugDisp.setX(_rect.getX() + _rect.getWidth() - debugDisp.getBoundsInLocal().getWidth());
 		debugDisp.setY(_rect.getY() - 5);
 		debugDisp.setMouseTransparent(true);
@@ -424,6 +460,7 @@ public class Block implements DrawableObject, Serializable
 				}
 			}
 		}
-		_outPort.Draw(pane);
+		if(_outPort!= null)
+			_outPort.Draw(pane);
     }
 }

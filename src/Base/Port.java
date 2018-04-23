@@ -42,11 +42,15 @@ public class Port implements DrawableObject, Serializable {
         for (int i =0;i<_link.size();)
         {
             Link middle = _link.get(i);
+            if(middle.getOutPort() != null)
+                Block.unsetCalculated(middle.getOutPort().GetBlock());
             Port in = middle.getOutPort();
             if(in != null) {
                 in.GetLinks().remove(middle);
             }
             this._link.remove(middle);
+            FXMLExampleController.AnchorPanel.getChildren().remove(middle.tmpPane);
+            FXMLExampleController.AnchorPanel.getChildren().remove(middle.txt);
             FXMLExampleController.AnchorPanel.getChildren().remove(middle.getLine());
             middle.Remove();
         }

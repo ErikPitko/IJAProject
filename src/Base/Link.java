@@ -6,8 +6,13 @@ import java.util.List;
 
 import Graphics.DrawableObject;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 public class Link implements DrawableObject, Serializable {
 	/**
@@ -19,7 +24,8 @@ public class Link implements DrawableObject, Serializable {
 	private transient Line line;
 	private boolean isCycled;
 	private static List<Line> cycledLinks = new ArrayList<>();
-
+	public Rectangle tmpPane;
+	public Text txt;
 	public Link() {
 		super();
 		line = new Line();
@@ -106,6 +112,31 @@ public class Link implements DrawableObject, Serializable {
 				line.setStroke(Color.RED);
 			else line.setStroke(Color.BLACK);
 			line.setStrokeWidth(3);
+			line.setOnMouseEntered(event ->
+			{
+				tmpPane = new Rectangle();
+				tmpPane.setX(event.getX()+1);
+				tmpPane.setY(event.getY()+1);
+				txt = new Text();
+				txt.setText(String.valueOf(inPort.GetBlock().getValue()));
+				txt.setFill(Color.BLACK);
+				txt.setX(event.getX()+txt.getBoundsInLocal().getWidth()/2);
+				txt.setY(event.getY()-txt.getBoundsInLocal().getHeight()/3);
+				tmpPane.setX(event.getX()+1);
+				tmpPane.setY(event.getY()-txt.getBoundsInLocal().getHeight());
+				tmpPane.setHeight(txt.getBoundsInLocal().getHeight());
+				tmpPane.setWidth(txt.getBoundsInLocal().getWidth()+20);
+				tmpPane.setFill(Color.WHITE);
+				tmpPane.setStroke(Color.BLACK);
+				pane.getChildren().add(tmpPane);
+				pane.getChildren().add(txt);
+
+			});
+			line.setOnMouseExited(event ->
+			{
+				pane.getChildren().remove(tmpPane);
+				pane.getChildren().remove(txt);
+			});
 			pane.getChildren().add(line);
 		}
 	}

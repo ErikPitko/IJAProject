@@ -113,12 +113,21 @@ public class FXMLExampleController implements Initializable
         lll.setOutPort(bl2.getInPorts().get(1));
         bl.GetOutPort().setLink(lll);
         bl2.getInPorts().get(1).setLink(lll);
+        Block bl3 = new Block(EBlock.IN, new Rect(0,50,100,100),10);
+        new Link(bl3.GetOutPort(),bl.getInPorts().get(0));
+        Block bl4 = new Block(EBlock.OUT, new Rect(650,100,100,100));
+        bl4.genInPort();
+        new Link(bl2.GetOutPort(),bl4.getInPorts().get(0));
         bl.Draw(_anchorPanelComponent);
         bl1.Draw(_anchorPanelComponent);
         bl2.Draw(_anchorPanelComponent);
+        bl3.Draw(_anchorPanelComponent);
+        bl4.Draw(_anchorPanelComponent);
         Panel.BlockList.add(bl);
         Panel.BlockList.add(bl1);
         Panel.BlockList.add(bl2);
+        Panel.BlockList.add(bl3);
+        Panel.BlockList.add(bl4);
         _openComponent.setOnAction(event ->
         {
             FileChooser fileChooser = new FileChooser();
@@ -249,11 +258,12 @@ public class FXMLExampleController implements Initializable
                                         }
                                     }
                                     if(source == null)
-                                        if(Panel.BlockList.get(i).GetOutPort().Rect.getX() == ((Rectangle) arg0.getTarget()).getX() && Panel.BlockList.get(i).GetOutPort().Rect.getY() == ((Rectangle) arg0.getTarget()).getY()  )
-                                        {
-                                            source = Panel.BlockList.get(i).GetOutPort();
-                                            isIn = false;
-                                        }
+                                        if(Panel.BlockList.get(i).GetOutPort() != null)
+                                            if(Panel.BlockList.get(i).GetOutPort().Rect.getX() == ((Rectangle) arg0.getTarget()).getX() && Panel.BlockList.get(i).GetOutPort().Rect.getY() == ((Rectangle) arg0.getTarget()).getY()  )
+                                            {
+                                                source = Panel.BlockList.get(i).GetOutPort();
+                                                isIn = false;
+                                            }
                                 }
                             }
                             else
@@ -285,21 +295,22 @@ public class FXMLExampleController implements Initializable
 
                                         }
                                     if(source != null)
-                                        if(Panel.BlockList.get(i).GetOutPort().Rect.getX() == ((Rectangle) arg0.getTarget()).getX() && Panel.BlockList.get(i).GetOutPort().Rect.getY() == ((Rectangle) arg0.getTarget()).getY()&& isIn)
-                                        {
-                                            if(source.GetLinks().size() > 0)
-                                                source = null;
-                                            else if(source.GetBlock() != Panel.BlockList.get(i).GetOutPort().GetBlock())
+                                        if(Panel.BlockList.get(i).GetOutPort() != null)
+                                            if(Panel.BlockList.get(i).GetOutPort().Rect.getX() == ((Rectangle) arg0.getTarget()).getX() && Panel.BlockList.get(i).GetOutPort().Rect.getY() == ((Rectangle) arg0.getTarget()).getY()&& isIn)
                                             {
-                                                Link l2 = new Link(Panel.BlockList.get(i).GetOutPort(),source);
-                                                ShowError(l2,i);
+                                                if(source.GetLinks().size() > 0)
+                                                    source = null;
+                                                else if(source.GetBlock() != Panel.BlockList.get(i).GetOutPort().GetBlock())
+                                                {
+                                                    Link l2 = new Link(Panel.BlockList.get(i).GetOutPort(),source);
+                                                    ShowError(l2,i);
+                                                }
+                                                else
+                                                {
+                                                    source = null;
+                                                    break;
+                                                }
                                             }
-                                            else
-                                            {
-                                                source = null;
-                                                break;
-                                            }
-                                        }
                                 }
                             }
                     }
@@ -309,11 +320,12 @@ public class FXMLExampleController implements Initializable
                 {
                     if(arg0.getClickCount() == 2) {
                         for (int i = 0; i < Panel.BlockList.size(); i++) {
-                            for (int a = 0; a < Panel.BlockList.get(i).GetOutPort().GetLinks().size(); a++) {
-                                if (Panel.BlockList.get(i).GetOutPort().GetLinks().get(a).getLine() == arg0.getTarget()) {
-                                    Panel.BlockList.get(i).GetOutPort().GetLinks().get(a).getOutPort().unSetLink();
+                            if(Panel.BlockList.get(i).GetOutPort() != null)
+                                for (int a = 0; a < Panel.BlockList.get(i).GetOutPort().GetLinks().size(); a++) {
+                                    if (Panel.BlockList.get(i).GetOutPort().GetLinks().get(a).getLine() == arg0.getTarget()) {
+                                        Panel.BlockList.get(i).GetOutPort().GetLinks().get(a).getOutPort().unSetLink();
+                                    }
                                 }
-                            }
                         }
                     }
                 }

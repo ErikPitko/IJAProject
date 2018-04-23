@@ -4,11 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import Graphics.DrawableObject;
-import Graphics.FXMLExampleController;
-import Graphics.Point2D;
-import Graphics.Rect;
+import Graphics.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -216,7 +215,20 @@ public class Block implements DrawableObject
 	}
 
 	public Port GetOutPort(){ return _outPort; }
-
+	public void SetOutPort(Port p)
+	{
+		_outPort = p;
+	}
+	public void SetInPorts(List<Port> portList)
+	{
+		inPorts.clear();
+		inPorts.addAll(portList);
+	}
+	public void SetInPort(int index, Port newInPort)
+	{
+		inPorts.set(index,newInPort);
+		CalculatePortsToMiddle();
+	}
 	public double getValue() {
 		return value;
 	}
@@ -280,8 +292,14 @@ public class Block implements DrawableObject
 
 	public void Resize(double deltaX,double deltaY)
 	{
+		boolean anyIntersects;
 		if(_rect.getWidth() + deltaX > MINBLOCKSIZE  && _rect.getWidth()+deltaX < MAXBLOCKSIZE)
-			_rect.setWidth(_rect.getWidth()+deltaX);
+		{
+
+			_rect.setWidth(_rect.getWidth() + deltaX);
+			//System.out.println("intersects");
+		}
+
 		if(_rect.getHeight()+deltaY >= inPorts.size()*(Port.PORT_SIZE+5))
 			if(_rect.getHeight() + deltaY > MINBLOCKSIZE && _rect.getHeight()+deltaY < MAXBLOCKSIZE)
 				_rect.setHeight(_rect.getHeight()+deltaY);
@@ -333,6 +351,7 @@ public class Block implements DrawableObject
 			FXMLExampleController.AnchorPanel.getChildren().remove(inPorts.get(i).Rect);
 		}
 		FXMLExampleController.AnchorPanel.getChildren().remove(_resizeRect);
+		Panel.BlockList.remove(this);
 	}
 
     @Override

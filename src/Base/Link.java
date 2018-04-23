@@ -28,6 +28,13 @@ public class Link implements DrawableObject {
 		line = new Line();
 		isCycled = false;
 	}
+	public Link(Link link) {
+		super();
+		line = link.line;
+		setOutPort(link.outPort);
+		setInPort(link.inPort);
+		isCycled = link.isCycled;
+	}
 
 	public Link(Port inPort, Port outPort) {
 		super();

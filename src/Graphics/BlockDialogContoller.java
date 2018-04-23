@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 
 import Base.Block;
 import Base.EBlock;
+import Base.Link;
 import Base.Port;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -22,7 +23,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -56,8 +57,11 @@ public class BlockDialogContoller implements Initializable{
 
 	private static Point2D _position;
 
-	public static void CreateBlockDialog(Point2D position,Point2D clickedPosition) {
+	private static Block editBlock;
+
+	public static void CreateBlockDialog(Point2D position,Point2D clickedPosition,Block editBlock) {
 		close();
+		BlockDialogContoller.editBlock = editBlock;
 		Parent root;
         try {
 			root = FXMLLoader.load(BlockDialogContoller.class.getClassLoader().getResource("Graphics/blockDialog.fxml"));
@@ -116,7 +120,10 @@ public class BlockDialogContoller implements Initializable{
 		InitButt(DIV,EBlock.DIV);
 		InitButt(IN,EBlock.IN);
 		InitButt(OUT,EBlock.OUT);
-		
+
+		if(editBlock != null)
+			Apply.setText("Edit");
+
 		Value.textProperty().addListener(new ChangeListener<String>() {
 		    @Override
 		    public void changed(ObservableValue<? extends String> observable, String oldValue, 
@@ -133,16 +140,42 @@ public class BlockDialogContoller implements Initializable{
 		});
 		
 		Apply.setOnMouseClicked(event->{
-			if (buttSelected != null) {
+			if (buttSelected != null)
+			{
 				Block block;
 				if (buttSelected == EBlock.IN)
-					block = new Block(buttSelected, new Rect(_position,100,100), Double.parseDouble(Value.getText()));
-				else 
-					block = new Block(buttSelected, new Rect(_position,100,InputSlider.getValue()* (Port.PORT_SIZE+5)));
-				for(int i = 0; i < InputSlider.getValue(); i++)
+					block = new Block(buttSelected, new Rect(_position, 100, 100), Double.parseDouble(Value.getText()));
+				else {
+					double sizey = InputSlider.getValue() * (Port.PORT_SIZE + 5);
+					if (sizey < Block.MINBLOCKSIZE)
+						sizey = Block.MINBLOCKSIZE;
+					block = new Block(buttSelected, new Rect(_position, 100, sizey));
+				}
+				for (int i = 0; i < InputSlider.getValue(); i++)
 					block.genInPort();
+
+				if(editBlock!= null)
+				{
+					for (int i = 0; i < editBlock.GetOutPort().GetLinks().size();i++)
+					{
+						new Link(block.GetOutPort(),editBlock.GetOutPort().GetLinks().get(i).getOutPort());
+					}
+					for (int i = 0; i < editBlock.getInPorts().size();i++)
+					{
+						if(i == block.getInPorts().size())
+							break;
+						for(int j=0;j < editBlock.getInPorts().get(i).GetLinks().size();j++)
+						{
+							new Link(editBlock.getInPorts().get(i).GetLinks().get(j).getInPort(),block.getInPorts().get(i));
+						}
+
+					}
+					editBlock.DeleteBlock();
+				}
 				Panel.BlockList.add(block);
 				block.Draw(FXMLExampleController.AnchorPanel);
+				block.Move(1,0);
+				block.Move(-1,0);
 				close();
 			}
 		});

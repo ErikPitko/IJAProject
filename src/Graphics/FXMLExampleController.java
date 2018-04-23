@@ -12,7 +12,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
@@ -22,8 +21,6 @@ import java.io.File;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class FXMLExampleController implements Initializable
 {
@@ -158,7 +155,11 @@ public class FXMLExampleController implements Initializable
             }
         });
 
-
+        MenuItem item1 = new MenuItem("Edit");
+        item1.setOnAction(event ->
+        {
+            BlockDialogContoller.CreateBlockDialog(new Point2D(contextMenu.getX(),contextMenu.getY()),blDelete.getRect().Position(),blDelete);
+        });
         MenuItem item2 = new MenuItem("Delete");
         item2.setOnAction(event ->
         {
@@ -170,7 +171,7 @@ public class FXMLExampleController implements Initializable
             contextMenu.hide();
         });
 
-        contextMenu.getItems().addAll(/*item1, */item2,item3);
+        contextMenu.getItems().addAll(item1,item2,item3);
 
         
         _anchorPanelComponent.setOnMouseClicked(arg0 ->
@@ -180,7 +181,7 @@ public class FXMLExampleController implements Initializable
                 System.out.println(arg0.getTarget());
         		if ((arg0.getTarget() instanceof AnchorPane))
         		{
-        			BlockDialogContoller.CreateBlockDialog(new Point2D(arg0.getScreenX(), arg0.getScreenY()),new Point2D(arg0.getX(),arg0.getY()));
+        			BlockDialogContoller.CreateBlockDialog(new Point2D(arg0.getScreenX(), arg0.getScreenY()),new Point2D(arg0.getX(),arg0.getY()),null);
         		}
         		else if((arg0.getTarget() instanceof ImageView))
         		{
@@ -314,15 +315,13 @@ public class FXMLExampleController implements Initializable
                     startDrag = new Point2D((int) event.getX(), (int) event.getY());
                     isBackgroundMove = true;
                 }
-                else if(((Rectangle)event.getTarget()).getWidth()== 8 && ((Rectangle) event.getTarget()).getHeight()== 8)
-                {
-                    for (Block tmpBlock:Panel.BlockList)
-                    {
-                        if(tmpBlock.GetResizeRect() == (Rectangle)event.getTarget())
-                        {
-                            System.out.println("aaa");
-                            resizeBlock = tmpBlock;
-                            startDrag = new Point2D((int) event.getX(), (int) event.getY());
+                else if ((event.getTarget() instanceof Rectangle)) {
+                    if (((Rectangle) event.getTarget()).getWidth() == 8 && ((Rectangle) event.getTarget()).getHeight() == 8) {
+                        for (Block tmpBlock : Panel.BlockList) {
+                            if (tmpBlock.GetResizeRect() == (Rectangle) event.getTarget()) {
+                                resizeBlock = tmpBlock;
+                                startDrag = new Point2D((int) event.getX(), (int) event.getY());
+                            }
                         }
                     }
                 }
@@ -349,7 +348,6 @@ public class FXMLExampleController implements Initializable
             }
             else if(resizeBlock != null)
             {
-                System.out.println("RESIZE");
                 double deltaX = -Point2D.Vector(new Point2D(event.getX(), event.getY()), startDrag).X;
                 double deltaY = -Point2D.Vector(new Point2D(event.getX(), event.getY()), startDrag).Y;
                 resizeBlock.Resize(deltaX,deltaY);

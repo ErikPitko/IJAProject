@@ -1,8 +1,14 @@
 package Graphics;
 
-public class Point2D
+import java.io.Serializable;
+
+public class Point2D implements Serializable
 {
-    public double X;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3647197621858265823L;
+	public double X;
     public double Y;
 
     public Point2D(double x,double y)

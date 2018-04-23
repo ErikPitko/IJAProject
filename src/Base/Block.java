@@ -3,6 +3,7 @@ package Base;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,21 +17,25 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-public class Block implements DrawableObject
+public class Block implements DrawableObject, Serializable
 {
-    private EBlock _eBlock;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -1383706658730772727L;
+	private EBlock _eBlock;
     private Rect _rect;
-    private Rect _resizeRect;
-    private ImageView image;
+    private transient Rect _resizeRect;
+    private transient ImageView image;
     private ArrayList<Port> inPorts = new ArrayList<Port>();
 	private Port _outPort;
 	private double value = 0;
-	private boolean calculated = false;
+	private transient boolean calculated = false;
 	public static final int MINBLOCKSIZE = 100;
 	public static final int MAXBLOCKSIZE = 400;
-	private Text debugDisp;
-	private Text disp;
-
+	private transient Text debugDisp;
+	private transient Text disp;
+	
 	public Block(EBlock eBlock, Rect rect) {
 		super();
 		this._eBlock = eBlock;
@@ -66,8 +71,7 @@ public class Block implements DrawableObject
 		}
 		return false;
 	}
-
-
+	
 //	 public Block(EBlock eBlock, Rect rect, int numOfInput)
 //	    {
 //	        if(numOfInput < 2)

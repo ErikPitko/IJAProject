@@ -1,5 +1,7 @@
 package Graphics;
 
+import java.util.ArrayList;
+
 import Base.Block;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -10,15 +12,12 @@ import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class Panel extends Application
 {
 	
 	private static Stage stage;
-    public static List<Block> BlockList;
+    public static ArrayList<Block> BlockList;
 	
     public static Stage getStage() {
 		return stage;

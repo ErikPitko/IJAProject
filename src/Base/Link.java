@@ -1,27 +1,24 @@
 package Base;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import Graphics.DrawableObject;
-import Graphics.LineMesh;
-import javafx.scene.Node;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class Link implements DrawableObject {
-	private LineMesh mesh;
+public class Link implements DrawableObject, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7233283247452423376L;
 	private Port inPort;
 	private Port outPort;
-	private Line line;
+	private transient Line line;
 	private boolean isCycled;
 	private static List<Line> cycledLinks = new ArrayList<>();
-
-	public LineMesh getLinkMesh() {
-		return mesh;
-	}
 
 	public Link() {
 		super();
@@ -40,15 +37,6 @@ public class Link implements DrawableObject {
 		super();
 		setInPort(inPort);
 		line = new Line();
-		setOutPort(outPort);
-		isCycled = false;
-	}
-
-	public Link(Port inPort, Port outPort, LineMesh mesh) {
-		super();
-		this.mesh = mesh;
-		line = new Line();
-		setInPort(inPort);
 		setOutPort(outPort);
 		isCycled = false;
 	}

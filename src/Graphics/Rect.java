@@ -1,11 +1,18 @@
 package Graphics;
 
+import java.io.Serializable;
+
 import javafx.scene.shape.Rectangle;
 
-public class Rect extends Rectangle
+public class Rect extends Rectangle implements Serializable
 {
 
-    public double XMin() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -9185232623645758681L;
+
+	public double XMin() {
         return getX();
     }
 

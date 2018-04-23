@@ -1,23 +1,25 @@
 package Base;
 
-import Graphics.DrawableObject;
-import Graphics.FXMLExampleController;
-import Graphics.Rect;
-import javafx.scene.Node;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Port implements DrawableObject {
+import Graphics.DrawableObject;
+import Graphics.FXMLExampleController;
+import Graphics.Rect;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 
-    public Rect Rect;
+public class Port implements DrawableObject, Serializable {
+
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2425142487765901647L;
+	public Rect Rect;
     private Block _block;
     private List<Link> _link;
-    private Color _backgroundColor;
+    private transient Color _backgroundColor;
     public static final int PORT_SIZE = 15;
 
     public List<Link> GetLinks() {

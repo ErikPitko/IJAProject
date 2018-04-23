@@ -1,14 +1,25 @@
 package Graphics;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Optional;
+import java.util.ResourceBundle;
+
 import Base.Block;
 import Base.EBlock;
 import Base.Link;
+import Base.LoadManager;
 import Base.Port;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
@@ -16,11 +27,6 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
-
-import java.io.File;
-import java.net.URL;
-import java.util.Optional;
-import java.util.ResourceBundle;
 
 public class FXMLExampleController implements Initializable
 {
@@ -120,6 +126,15 @@ public class FXMLExampleController implements Initializable
             );
             File file = fileChooser.showOpenDialog(Panel.getStage());
             //TODO parse loaded file
+            try {
+				LoadManager.loadScene(file);
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         });
 
         _saveComponent.setOnAction(event ->
@@ -130,6 +145,13 @@ public class FXMLExampleController implements Initializable
                     new FileChooser.ExtensionFilter("Scheme", "*.ija")
             );
             File file = fileChooser.showSaveDialog(Panel.getStage());
+            
+			try {
+				LoadManager.saveScene(Panel.BlockList, file);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
             //TODO save scheme to file
         });
 

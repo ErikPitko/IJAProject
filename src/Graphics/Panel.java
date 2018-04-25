@@ -100,7 +100,7 @@ public class Panel extends Application {
 				}
 				if (outBlock != null) {
 					stepCounter++;
-					Block.unsetCalculated(outBlock);
+//					Block.unsetCalculated(outBlock);
 					Block.compute(outBlock);
 				}
 			}

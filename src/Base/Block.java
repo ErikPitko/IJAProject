@@ -528,17 +528,19 @@ public class Block implements DrawableObject, Serializable {
 		if (_outPort != null) {
 			_outPort.Rect.setX(_rect.XMax() - Port.PORT_SIZE - 5);
 			_outPort.Rect.setY(_rect.Center().Y - Port.PORT_SIZE / 2);
-			for (Link outLinks : _outPort.GetLinks()) {
-				outLinks.getLine().setStartX(_outPort.Rect.Center().X + Port.PORT_SIZE / 2);
-				outLinks.getLine().setStartY(_outPort.Rect.Center().Y);
-			}
+			for (int i = 0; i < _outPort.GetLinks().size(); i++)
+				if (_outPort.GetLinks().get(i) != null) {
+					MainWindowController.AnchorPanel.getChildren().remove(_outPort.GetLinks().get(i).getLine());
+					_outPort.GetLinks().get(i).Draw(MainWindowController.AnchorPanel);
+				}
 		}
 
 		for (Port inport : inPorts) {
-			for (Link inLinks : inport.GetLinks()) {
-				inLinks.getLine().setEndX(inport.Rect.Center().X - Port.PORT_SIZE / 2);
-				inLinks.getLine().setEndY(inport.Rect.Center().Y);
-			}
+			for (int i = 0; i < inport.GetLinks().size(); i++)
+				if (inport.GetLinks().get(i) != null) {
+					MainWindowController.AnchorPanel.getChildren().remove(inport.GetLinks().get(i).getLine());
+					inport.GetLinks().get(i).Draw(MainWindowController.AnchorPanel);
+				}
 		}
 		image.setFitWidth(_rect.getWidth());
 		image.setFitHeight(_rect.getHeight());
@@ -578,8 +580,6 @@ public class Block implements DrawableObject, Serializable {
 	@Override
 	public void Draw(AnchorPane pane) {
 		image = new ImageView(new Image(getClass().getResourceAsStream("/Res/" + _eBlock.toString() + ".png")));
-//		image.setFitHeight(_rect.getHeight());
-//		image.setFitWidth(_rect.getWidth());
 		image.setFitHeight(256);
 		image.setFitWidth(256);
 		

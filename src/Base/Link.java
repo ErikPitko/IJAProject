@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Graphics.DrawableObject;
+import Graphics.Point2D;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -31,6 +32,9 @@ public class Link implements DrawableObject, Serializable {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -7233283247452423376L;
 
+	/** Constant specifying distance between line and center of the port */
+	private static final double PORT_LINK_OFFSET = Port.PORT_SIZE / 2 + 1;
+	
 	/** The input port. */
 	private Port inPort;
 
@@ -178,6 +182,20 @@ public class Link implements DrawableObject, Serializable {
 		isCycled = false;
 		cycledLinks.remove(line);
 	}
+	
+	/**
+	 * Sets start and end point of the line on the circumference of the port
+	 */
+	private void calculateLinkPortConnection() {
+		Point2D point1 = new Point2D(inPort.Rect.Center().X, inPort.Rect.Center().Y);
+		Point2D point2 = new Point2D(outPort.Rect.Center().X, outPort.Rect.Center().Y);
+		double angle = Point2D.GetAngleBetweenTwoPoints(point1, point2);
+
+		line.setStartX(point1.X + (Math.cos(angle) * PORT_LINK_OFFSET));
+		line.setStartY(point1.Y + (Math.sin(angle) * PORT_LINK_OFFSET));
+		line.setEndX(point2.X + (Math.cos(angle+ Math.PI) * PORT_LINK_OFFSET));
+		line.setEndY(point2.Y + (Math.sin(angle+ Math.PI) * PORT_LINK_OFFSET));
+	}
 
 	/**
 	 * @see Graphics.DrawableObject#Draw(javafx.scene.layout.AnchorPane)
@@ -187,10 +205,7 @@ public class Link implements DrawableObject, Serializable {
 		if (inPort == null || outPort == null)
 			return;
 		if (!pane.getChildren().contains(line)) {
-			line.setStartX(inPort.Rect.Center().X + Port.PORT_SIZE / 2 + 1);
-			line.setStartY(inPort.Rect.Center().Y);
-			line.setEndX(outPort.Rect.Center().X - (Port.PORT_SIZE / 2 + 1));
-			line.setEndY(outPort.Rect.Center().Y);
+			calculateLinkPortConnection();
 			if (isCycled)
 				line.setStroke(Color.RED);
 			else

@@ -14,6 +14,7 @@ package Graphics;
 
 import java.io.Serializable;
 
+
 /**
  * The Point2D class.
  */
@@ -68,6 +69,19 @@ public class Point2D implements Serializable {
 	public static Point2D Vector(Point2D first, Point2D second) {
 		return new Point2D(second.X - first.X, second.Y - first.Y);
 	}
+	
+	/**
+	 * Determines the angle of a straight line drawn between point one and two.
+	 * @param p1
+	 * @param p2
+	 * @return how much we have to rotate a horizontal line counter-clockwise for it to match the line between the two points
+	 */
+	public static double GetAngleBetweenTwoPoints(Point2D p1, Point2D p2)
+    {
+        double xDiff = p2.X - p1.X;
+        double yDiff = p2.Y - p1.Y;
+        return (Math.atan2(yDiff, xDiff));
+    }
 
 	/**
 	 * @see java.lang.Object#toString()

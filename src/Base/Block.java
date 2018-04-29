@@ -25,11 +25,15 @@ import Graphics.Panel;
 import Graphics.Point2D;
 import Graphics.Rect;
 import javafx.scene.CacheHint;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -38,7 +42,7 @@ import javafx.scene.text.TextAlignment;
  * The Block class.
  */
 public class Block implements DrawableObject, Serializable {
-	
+
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -1383706658730772727L;
 	/***
@@ -61,10 +65,10 @@ public class Block implements DrawableObject, Serializable {
 	 * List of input ports.
 	 */
 	private ArrayList<Port> inPorts = new ArrayList<Port>();
-	
+
 	/** The out port. */
 	private Port _outPort;
-	
+
 	/** * Stored value inside block. */
 	private double value = 0;
 	/***
@@ -73,17 +77,17 @@ public class Block implements DrawableObject, Serializable {
 	 * Individual block is not calculated multiple times in one calculation cycle.
 	 */
 	private transient boolean calculated = false;
-	
+
 	/** The Constant MINBLOCKSIZE. */
 	public static final int MINBLOCKSIZE = 100;
-	
+
 	/** The Constant MAXBLOCKSIZE. */
 	public static final int MAXBLOCKSIZE = 400;
 	/***
 	 * Counter used in debug mode.
 	 * 
-	 * Each individual block calculation rises counter by 1.
-	 * Calculation proceeds until it matches {@link Graphics.Panel#stepCounter}
+	 * Each individual block calculation rises counter by 1. Calculation proceeds
+	 * until it matches {@link Graphics.Panel#stepCounter}
 	 */
 	public static int stepCounter = 0;
 	/***
@@ -97,8 +101,10 @@ public class Block implements DrawableObject, Serializable {
 
 	/**
 	 *
-	 * @param eBlock type of the block
-	 * @param rect graphic properties of the block
+	 * @param eBlock
+	 *            type of the block
+	 * @param rect
+	 *            graphic properties of the block
 	 */
 	public Block(EBlock eBlock, Rect rect) {
 		super();
@@ -113,9 +119,12 @@ public class Block implements DrawableObject, Serializable {
 
 	/**
 	 *
-	 * @param eBlock type of the block
-	 * @param rect graphic properties of the block
-	 * @param value internal value of block used by input block
+	 * @param eBlock
+	 *            type of the block
+	 * @param rect
+	 *            graphic properties of the block
+	 * @param value
+	 *            internal value of block used by input block
 	 */
 	public Block(EBlock eBlock, Rect rect, double value) {
 		super();
@@ -142,7 +151,9 @@ public class Block implements DrawableObject, Serializable {
 	}
 
 	/***
-	 * Calculates block size according to number of input ports and centers output block.
+	 * Calculates block size according to number of input ports and centers output
+	 * block.
+	 * 
 	 * @return false if block is too small to contain all input ports
 	 */
 	private boolean RecalculateHeights() {
@@ -169,7 +180,9 @@ public class Block implements DrawableObject, Serializable {
 
 	/***
 	 * Assigns value and changes {@link #debugDisp} and {@link #disp}.
-	 * @param value value to be assigned
+	 * 
+	 * @param value
+	 *            value to be assigned
 	 */
 	private void setValue(double value) {
 		this.value = value;
@@ -195,8 +208,10 @@ public class Block implements DrawableObject, Serializable {
 	/**
 	 * Recursive searching for loops.
 	 *
-	 * @param comparing            Always left null
-	 * @param block            Block to be checked for loop in tree
+	 * @param comparing
+	 *            Always left null
+	 * @param block
+	 *            Block to be checked for loop in tree
 	 * @return true if loop is found
 	 */
 	public static boolean isCycled(Block comparing, Block block) {
@@ -221,12 +236,14 @@ public class Block implements DrawableObject, Serializable {
 		}
 		return found;
 	}
-	
+
 	/***
 	 * Recursive block calculation from root.
 	 * 
 	 * Recursively calls all blocks on all input ports and calculates its values.
-	 * @param block root block to be calculated
+	 * 
+	 * @param block
+	 *            root block to be calculated
 	 * @return value of given root block
 	 */
 	public static double compute(Block block) {
@@ -284,8 +301,11 @@ public class Block implements DrawableObject, Serializable {
 	/***
 	 * Set blocks to be recalculated after a change in links or blocks.
 	 * 
-	 * Recursively calls each block from given port and sets {@link #calculated} to false.
-	 * @param block changed block
+	 * Recursively calls each block from given port and sets {@link #calculated} to
+	 * false.
+	 * 
+	 * @param block
+	 *            changed block
 	 */
 	public static void unsetCalculated(Block block) {
 		if (block == null)
@@ -327,7 +347,8 @@ public class Block implements DrawableObject, Serializable {
 	/**
 	 * Sets the output port.
 	 *
-	 * @param p the output port
+	 * @param p
+	 *            the output port
 	 */
 	public void SetOutPort(Port p) {
 		_outPort = p;
@@ -336,7 +357,8 @@ public class Block implements DrawableObject, Serializable {
 	/**
 	 * Sets new list of input ports.
 	 *
-	 * @param portList new input port list
+	 * @param portList
+	 *            new input port list
 	 */
 	public void SetInPorts(List<Port> portList) {
 		inPorts.clear();
@@ -346,8 +368,10 @@ public class Block implements DrawableObject, Serializable {
 	/**
 	 * Sets new input port and calls {@link #CalculatePortsToMiddle()}.
 	 *
-	 * @param index index of input port to be changed
-	 * @param newInPort new input port
+	 * @param index
+	 *            index of input port to be changed
+	 * @param newInPort
+	 *            new input port
 	 */
 	public void SetInPort(int index, Port newInPort) {
 		inPorts.set(index, newInPort);
@@ -383,7 +407,9 @@ public class Block implements DrawableObject, Serializable {
 
 	/***
 	 * Sets new position, does not redraw in GUI.
-	 * @param position new position
+	 * 
+	 * @param position
+	 *            new position
 	 */
 	public void setRectPosition(Point2D position) {
 		_rect.setX(position.X);
@@ -402,7 +428,8 @@ public class Block implements DrawableObject, Serializable {
 	/**
 	 * Changes type of a block and calls {@link #unsetCalculated(Block)}.
 	 *
-	 * @param eBlock new block type
+	 * @param eBlock
+	 *            new block type
 	 */
 	public void setType(EBlock eBlock) {
 		this._eBlock = eBlock;
@@ -412,8 +439,10 @@ public class Block implements DrawableObject, Serializable {
 	/**
 	 * Moves block by value.
 	 *
-	 * @param deltaX pixels on X axis
-	 * @param deltaY pixels on Y axis
+	 * @param deltaX
+	 *            pixels on X axis
+	 * @param deltaY
+	 *            pixels on Y axis
 	 */
 	public void Move(double deltaX, double deltaY) {
 		_rect.setX(_rect.getX() + deltaX);
@@ -453,8 +482,11 @@ public class Block implements DrawableObject, Serializable {
 	 * Resizes block by value.
 	 * 
 	 * calls {@link #CalculatePortsToMiddle()}
-	 * @param deltaX pixels on X axis
-	 * @param deltaY pixels on Y axis
+	 * 
+	 * @param deltaX
+	 *            pixels on X axis
+	 * @param deltaY
+	 *            pixels on Y axis
 	 */
 	public void Resize(double deltaX, double deltaY) {
 		boolean anyIntersects = false;
@@ -538,16 +570,45 @@ public class Block implements DrawableObject, Serializable {
 
 	/**
 	 * Draws block to AnchorPane.
-	 * @param pane the pane
+	 * 
+	 * @param pane
+	 *            the pane
 	 * @see Graphics.DrawableObject#Draw(AnchorPane)
 	 */
 	@Override
 	public void Draw(AnchorPane pane) {
 		image = new ImageView(new Image(getClass().getResourceAsStream("/Res/" + _eBlock.toString() + ".png")));
-		image.setFitHeight(_rect.getHeight());
-		image.setFitWidth(_rect.getWidth());
+//		image.setFitHeight(_rect.getHeight());
+//		image.setFitWidth(_rect.getWidth());
+		image.setFitHeight(256);
+		image.setFitWidth(256);
+		
 		image.setX(_rect.getX());
 		image.setY(_rect.getY());
+
+		Rectangle clip = new Rectangle(image.getFitWidth(), image.getFitHeight());
+		clip.setX(_rect.getX());
+		clip.setY(_rect.getY());
+		clip.setArcWidth(25);
+		clip.setArcHeight(25);
+		image.setClip(clip);
+
+		// snapshot the rounded image.
+		SnapshotParameters parameters = new SnapshotParameters();
+		parameters.setFill(Color.TRANSPARENT);
+		WritableImage wImage = image.snapshot(parameters, null);
+
+		// remove the rounding clip so that our effect can show through.
+		image.setClip(null);
+
+		// apply a shadow effect.
+		image.setEffect(new DropShadow(20, Color.BLACK));
+
+		// store the rounded image in the imageView.
+		image.setImage(wImage);
+		image.setFitHeight(_rect.getHeight());
+		image.setFitWidth(_rect.getWidth());
+
 		Font font = null;
 		try {
 			font = Font.loadFont(new FileInputStream(new File("src/Res/fonts/Crasns.ttf")), 15);

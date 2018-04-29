@@ -16,10 +16,14 @@ import java.io.Serializable;
 
 import javafx.scene.shape.Rectangle;
 
+
+
 /**
  * The Rectangle class.
  */
 public class Rect extends Rectangle implements Serializable {
+	private transient static final int ARC_WIDTH = 35;
+	private transient static final int ARC_HEIGHT = 35;
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -9185232623645758681L;
@@ -92,6 +96,8 @@ public class Rect extends Rectangle implements Serializable {
 		setY(rect.getY());
 		setWidth(rect.getWidth());
 		setHeight(rect.getHeight());
+		this.setArcWidth(ARC_WIDTH); 
+		this.setArcHeight(ARC_HEIGHT); 
 	}
 
 	/**
@@ -106,6 +112,8 @@ public class Rect extends Rectangle implements Serializable {
 		setY(position.Y);
 		setWidth(size.X);
 		setHeight(size.Y);
+		this.setArcWidth(ARC_WIDTH); 
+		this.setArcHeight(ARC_HEIGHT); 
 	}
 
 	/**
@@ -121,6 +129,8 @@ public class Rect extends Rectangle implements Serializable {
 		setY(positionY);
 		setWidth(size.X);
 		setHeight(size.Y);
+		this.setArcWidth(ARC_WIDTH); 
+		this.setArcHeight(ARC_HEIGHT); 
 	}
 
 	/**
@@ -136,6 +146,8 @@ public class Rect extends Rectangle implements Serializable {
 		setY(position.Y);
 		setWidth(sizeX);
 		setHeight(sizeY);
+		this.setArcWidth(ARC_WIDTH); 
+		this.setArcHeight(ARC_HEIGHT); 
 	}
 
 	/**
@@ -152,6 +164,8 @@ public class Rect extends Rectangle implements Serializable {
 		setY(positionY);
 		setWidth(sizeX);
 		setHeight(sizeY);
+		this.setArcWidth(ARC_WIDTH); 
+		this.setArcHeight(ARC_HEIGHT); 
 	}
 
 	/**

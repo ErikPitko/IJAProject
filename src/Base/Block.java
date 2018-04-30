@@ -158,7 +158,8 @@ public class Block implements DrawableObject, Serializable {
 	private boolean RecalculateHeights() {
 		if (inPorts.size() * Port.PORT_SIZE >= _rect.getHeight() - 10) {
 			_rect.setY(inPorts.size() * Port.PORT_SIZE + inPorts.size() * 15);
-			_outPort.Rect.setY(_rect.getY() + _rect.getHeight() / 2 - Port.PORT_SIZE / 2);
+			if (_eBlock != EBlock.OUT)
+				_outPort.Rect.setY(_rect.getY() + _rect.getHeight() / 2 - Port.PORT_SIZE / 2);
 			return true;
 		}
 		return false;
@@ -613,7 +614,8 @@ public class Block implements DrawableObject, Serializable {
 		debugDisp.setX(_rect.getX() + _rect.getWidth() - debugDisp.getBoundsInLocal().getWidth());
 		debugDisp.setY(_rect.getY() - 5);
 		debugDisp.setMouseTransparent(true);
-		debugDisp.setVisible(false);
+		if (_eBlock != EBlock.IN)
+			debugDisp.setVisible(false);
 		if (_eBlock == EBlock.OUT) {
 			disp = new Text(String.valueOf(value));
 			disp.setMouseTransparent(true);

@@ -274,7 +274,8 @@ public class MainWindowController implements Initializable {
 			_debugComponent.setDisable(false);
 			_runComponent.setDisable(false);
 			for (Block block : Panel.BlockList) {
-				block.GetDebugText().setVisible(false);
+				if (block.getType() != EBlock.IN)
+					block.GetDebugText().setVisible(false);
 				Block.unsetCalculated(block);
 			}
 

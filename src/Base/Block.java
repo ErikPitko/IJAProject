@@ -260,14 +260,17 @@ public class Block implements DrawableObject, Serializable {
 				double value = compute(frontLink.getInPort().GetBlock());
 				if (Block.stepCounter == Panel.stepCounter) {
 					return value;
-				} else {
-					ImageView image = block.getImageView();
-					ColorAdjust blackout = new ColorAdjust();
-					blackout.setBrightness(-0.5);
-					image.setEffect(blackout);
-					image.setCache(true);
-					image.setCacheHint(CacheHint.SPEED);
-
+				}
+				else
+				{
+					if(MainWindowController.IsDebug) {
+						ImageView image = block.getImageView();
+						ColorAdjust blackout = new ColorAdjust();
+						blackout.setBrightness(-0.5);
+						image.setEffect(blackout);
+						image.setCache(true);
+						image.setCacheHint(CacheHint.SPEED);
+					}
 				}
 				if (first) {
 					first = false;
@@ -376,6 +379,16 @@ public class Block implements DrawableObject, Serializable {
 	public void SetInPort(int index, Port newInPort) {
 		inPorts.set(index, newInPort);
 		CalculatePortsToMiddle();
+	}
+
+	/**
+	 * Gets the the debug display.
+	 *
+	 * @return the debug display.
+	 */
+	public Text GetDebugText()
+	{
+		return debugDisp;
 	}
 
 	/**
@@ -489,32 +502,12 @@ public class Block implements DrawableObject, Serializable {
 	 *            pixels on Y axis
 	 */
 	public void Resize(double deltaX, double deltaY) {
-		boolean anyIntersects = false;
 		if (_rect.getWidth() + deltaX > MINBLOCKSIZE && _rect.getWidth() + deltaX < MAXBLOCKSIZE) {
-			for (int i = 0; i < Panel.BlockList.size(); i++) {
-				if (Panel.BlockList.get(i) != this)
-					if (new Rect(_rect.getX(), _rect.getY(), _rect.getWidth() + deltaX, _rect.getHeight())
-							.Intersect(Panel.BlockList.get(i).getRect()))
-						anyIntersects = true;
-				if (anyIntersects == true)
-					break;
-			}
-			if (!anyIntersects)
-				_rect.setWidth(_rect.getWidth() + deltaX);
+			_rect.setWidth(_rect.getWidth() + deltaX);
 		}
-		anyIntersects = false;
 		if (_rect.getHeight() + deltaY >= inPorts.size() * (Port.PORT_SIZE + 5))
 			if (_rect.getHeight() + deltaY > MINBLOCKSIZE && _rect.getHeight() + deltaY < MAXBLOCKSIZE) {
-				for (int i = 0; i < Panel.BlockList.size(); i++) {
-					if (Panel.BlockList.get(i) != this)
-						if (new Rect(_rect.getX(), _rect.getY(), _rect.getWidth(), _rect.getHeight() + deltaY)
-								.Intersect(Panel.BlockList.get(i).getRect()))
-							anyIntersects = true;
-					if (anyIntersects == true)
-						break;
-				}
-				if (!anyIntersects)
-					_rect.setHeight(_rect.getHeight() + deltaY);
+				_rect.setHeight(_rect.getHeight() + deltaY);
 			}
 		_resizeRect.setX(_rect.XMax() - 8);
 		_resizeRect.setY(_rect.YMax() - 8);
@@ -615,13 +608,12 @@ public class Block implements DrawableObject, Serializable {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-
 		debugDisp = new Text(String.valueOf(value));
 		// debugDisp.setFont(font);
 		debugDisp.setX(_rect.getX() + _rect.getWidth() - debugDisp.getBoundsInLocal().getWidth());
 		debugDisp.setY(_rect.getY() - 5);
 		debugDisp.setMouseTransparent(true);
-
+		debugDisp.setVisible(false);
 		if (_eBlock == EBlock.OUT) {
 			disp = new Text(String.valueOf(value));
 			disp.setMouseTransparent(true);
@@ -629,9 +621,9 @@ public class Block implements DrawableObject, Serializable {
 			disp.setX(_rect.Center().X - disp.getBoundsInLocal().getWidth() / 2);
 			disp.setY(_rect.Center().Y + 5);
 			disp.setTextAlignment(TextAlignment.CENTER);
-			pane.getChildren().addAll(_rect, image, debugDisp, disp);
+			pane.getChildren().addAll(_rect, image,debugDisp, disp);
 		} else
-			pane.getChildren().addAll(_rect, image, debugDisp);
+			pane.getChildren().addAll(_rect, image,debugDisp);
 		_resizeRect = new Rect(_rect.XMax() - 8, _rect.YMax() - 8, 8, 8);
 		_resizeRect.setFill(Color.WHITE);
 		_resizeRect.setStroke(Color.BLACK);

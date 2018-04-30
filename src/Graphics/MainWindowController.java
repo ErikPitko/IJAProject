@@ -27,6 +27,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.CacheHint;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
@@ -39,6 +40,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
+import org.hamcrest.core.Is;
 
 /**
  * The MainWindow controller class.
@@ -69,12 +71,31 @@ public class MainWindowController implements Initializable {
 	@FXML
 	private MenuItem _clearComponent;
 
+	/** The run menu-item component. */
+	@FXML
+	private MenuItem _runComponent;
+
+	/** The debug menu-item component. */
+	@FXML
+	private MenuItem _debugComponent;
+
+	/** The next step debug menu-item component. */
+	@FXML
+	private MenuItem _nextComponent;
+
+	/** The exit debug menu-item component. */
+	@FXML
+	private MenuItem _exitDebugComponent;
+
 	/** The error notification panel component. */
 	@FXML
 	private Label _errorLog;
 
 	/** The Anchor panel. */
 	public static AnchorPane AnchorPanel;
+
+	/** If debug is running. */
+	public static boolean IsDebug;
 
 	/** The source port. */
 	private Port source;
@@ -115,18 +136,70 @@ public class MainWindowController implements Initializable {
 	 * @param i
 	 *            the index of the block in loop
 	 */
-	private void ShowError(Link l2, int i) {
+	private void ShowCycleError(Link l2, int i) {
 		if (Block.isCycled(null, Panel.BlockList.get(i))) {
 			l2.SetCycled();
-			Timeline timeline = new Timeline(new KeyFrame(Duration.millis(3000), ae -> _errorLog.setText("")));
-			timeline.play();
-			_errorLog.setText("Warning: Scheme contains cycle.");
+			ShowError("Warning: Scheme contains cycle.",3000);
 		} else {
 			Block.unsetCalculated(source.GetBlock());
 			Block.unsetCalculated(Panel.BlockList.get(i));
 		}
 		l2.Draw(_anchorPanelComponent);
 		source = null;
+	}
+
+	/**
+	 * Shows error in the right down corner.
+	 * @param log text that be shown.
+	 * @param timeLine	time in miliseconds. This shows how long it will show.
+	 */
+	private void ShowError(String log,int timeLine)
+	{
+		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(timeLine), ae -> _errorLog.setText("")));
+		timeline.play();
+		_errorLog.setText(log);
+	}
+
+	/**
+	 * Runs the calculculate recursively on all outblocks.
+	 */
+	private void Run()
+	{
+		Block.stepCounter = Integer.MAX_VALUE;
+		int outBlockCount = 0;
+		for (int i = 0; i < Panel.BlockList.size(); i++) {
+			if (Panel.BlockList.get(i).getType() == EBlock.OUT)
+				outBlockCount++;
+				Block.compute(Panel.BlockList.get(i));
+		}
+		if(outBlockCount == 0)
+		{
+			ShowError("Error: You cannot run it there is not out port in schema.",3000);
+		}
+	}
+
+	/**
+	 * Runs calculate step by step and shows debug
+	 */
+	private void Debug()
+	{
+		for (int i = 0; i < Panel.BlockList.size(); i++)
+		{
+			Panel.BlockList.get(i).GetDebugText().setVisible(true);
+			ImageView image = Panel.BlockList.get(i).getImageView();
+			image.setEffect(null);
+			image.setCache(true);
+			image.setCacheHint(CacheHint.SPEED);
+		}
+		Block outBlock = null;
+		for (int i = 0; i < Panel.BlockList.size(); i++) {
+			if (Panel.BlockList.get(i).getType() == EBlock.OUT && Panel.BlockList.get(i).getValue() == 0)
+				outBlock = Panel.BlockList.get(i);
+		}
+		if (outBlock != null) {
+			Panel.stepCounter++;
+			Block.compute(outBlock);
+		}
 	}
 
 	/**
@@ -183,6 +256,35 @@ public class MainWindowController implements Initializable {
 		Panel.BlockList.add(bl2);
 		Panel.BlockList.add(bl3);
 		Panel.BlockList.add(bl4);
+		_runComponent.setOnAction(event -> {
+			Run();
+		});
+		_debugComponent.setOnAction(event -> {
+			IsDebug = true;
+			_nextComponent.setDisable(false);
+			_exitDebugComponent.setDisable(false);
+			Debug();
+			_runComponent.setDisable(true);
+			_debugComponent.setDisable(true);
+		});
+		_nextComponent.setOnAction(event -> {
+			Debug();
+		});
+		_exitDebugComponent.setOnAction(event->{
+			IsDebug = false;
+			_nextComponent.setDisable(true);
+			_exitDebugComponent.setDisable(true);
+			_debugComponent.setDisable(false);
+			_runComponent.setDisable(false);
+			for (Block block: Panel.BlockList)
+			{
+				block.GetDebugText().setVisible(false);
+				Block.unsetCalculated(block);
+			}
+
+		});
+
+
 		_openComponent.setOnAction(event -> {
 			FileChooser fileChooser = new FileChooser();
 			fileChooser.setTitle("Open scheme");
@@ -320,7 +422,7 @@ public class MainWindowController implements Initializable {
 										else if (source.GetBlock() != Panel.BlockList.get(i).getInPorts().get(y)
 												.GetBlock()) {
 											Link l2 = new Link(source, Panel.BlockList.get(i).getInPorts().get(y));
-											ShowError(l2, i);
+											ShowCycleError(l2, i);
 										} else {
 											source = null;
 											break;
@@ -339,7 +441,7 @@ public class MainWindowController implements Initializable {
 											else if (source.GetBlock() != Panel.BlockList.get(i).GetOutPort()
 													.GetBlock()) {
 												Link l2 = new Link(Panel.BlockList.get(i).GetOutPort(), source);
-												ShowError(l2, i);
+												ShowCycleError(l2, i);
 											} else {
 												source = null;
 												break;

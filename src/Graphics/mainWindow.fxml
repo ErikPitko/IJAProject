@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.input.*?>
 <?import javafx.scene.text.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
@@ -20,6 +21,26 @@
             <Menu mnemonicParsing="false" text="Edit">
                <items>
                   <MenuItem fx:id="_clearComponent" mnemonicParsing="false" text="Clear" />
+               </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Scheme">
+               <items>
+                  <MenuItem fx:id="_runComponent" mnemonicParsing="false" text="Run">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="R" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <MenuItem fx:id="_debugComponent" mnemonicParsing="false" text="Debug">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="D" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <MenuItem fx:id="_nextComponent" disable="true" mnemonicParsing="false" text="Next step">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="SPACE" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <MenuItem fx:id="_exitDebugComponent" disable="true" mnemonicParsing="false" text="Exit debug">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="Q" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
+                     </accelerator></MenuItem>
                </items>
             </Menu>
           <Menu mnemonicParsing="false" text="Help">

@@ -79,33 +79,6 @@ public class Panel extends Application {
 			}
 		});
 
-		scene.setOnKeyPressed(arg -> {
-			if (arg.getCode() == KeyCode.ENTER) {
-				Block.stepCounter = Integer.MAX_VALUE;
-				for (int i = 0; i < Panel.BlockList.size(); i++) {
-					if (Panel.BlockList.get(i).getType() == EBlock.OUT)
-						Block.compute(Panel.BlockList.get(i));
-				}
-			} else if (arg.getCode() == KeyCode.SPACE) {
-				for (int i = 0; i < Panel.BlockList.size(); i++) {
-					ImageView image = Panel.BlockList.get(i).getImageView();
-					image.setEffect(null);
-					image.setCache(true);
-					image.setCacheHint(CacheHint.SPEED);
-				}
-				Block outBlock = null;
-				for (int i = 0; i < Panel.BlockList.size(); i++) {
-					if (Panel.BlockList.get(i).getType() == EBlock.OUT && Panel.BlockList.get(i).getValue() == 0)
-						outBlock = Panel.BlockList.get(i);
-				}
-				if (outBlock != null) {
-					stepCounter++;
-//					Block.unsetCalculated(outBlock);
-					Block.compute(outBlock);
-				}
-			}
-		});
-
 		stage = primaryStage;
 		primaryStage.show();
 	}

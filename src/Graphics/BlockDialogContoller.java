@@ -206,13 +206,11 @@ public class BlockDialogContoller implements Initializable {
 				Block block;
 				if (buttSelected == EBlock.IN)
 					block = new Block(buttSelected, new Rect(_position, 100, 100), Double.parseDouble(Value.getText()));
-				else if (buttSelected == EBlock.OUT)
-					block = new Block(buttSelected, new Rect(_position, 100, 100), Double.parseDouble(Value.getText()));
 				else {
 					double sizey = InputSlider.getValue() * (Port.PORT_SIZE + 5);
 					if (sizey < Block.MINBLOCKSIZE)
 						sizey = Block.MINBLOCKSIZE;
-					block = new Block(buttSelected, new Rect(_position, 100, sizey));
+					block = new Block(buttSelected, new Rect(_position, sizey, sizey));
 				}
 				for (int i = 0; i < InputSlider.getValue(); i++)
 					block.genInPort();

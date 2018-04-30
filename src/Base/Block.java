@@ -141,28 +141,11 @@ public class Block implements DrawableObject, Serializable {
 	 * Centers input ports in the block.
 	 */
 	private void CalculatePortsToMiddle() {
-		RecalculateHeights();
 		double step = _rect.getHeight() / inPorts.size();
 		double div = step / 2;
 		for (int i = 0; i < inPorts.size(); i++) {
 			inPorts.get(i).Rect.setY((int) (_rect.getY() + (i + 1) * step - div - Port.PORT_SIZE / 2));
 		}
-	}
-
-	/***
-	 * Calculates block size according to number of input ports and centers output
-	 * block.
-	 * 
-	 * @return false if block is too small to contain all input ports
-	 */
-	private boolean RecalculateHeights() {
-		if (inPorts.size() * Port.PORT_SIZE >= _rect.getHeight() - 10) {
-			_rect.setY(inPorts.size() * Port.PORT_SIZE + inPorts.size() * 15);
-			if (_eBlock != EBlock.OUT)
-				_outPort.Rect.setY(_rect.getY() + _rect.getHeight() / 2 - Port.PORT_SIZE / 2);
-			return true;
-		}
-		return false;
 	}
 
 	/***

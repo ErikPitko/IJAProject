@@ -125,6 +125,8 @@ public class LoadManager {
 
 		for (int i = 0; i < sBlockList.size(); i++) {
 			Block currBlock = sBlockList.get(i).getBlock();
+			if (currBlock.GetOutPort() == null)
+				continue;
 			int linkSize = currBlock.GetOutPort().GetLinks().size();
 			for (int j = 0; j < linkSize; j++) {
 				Link currLink = currBlock.GetOutPort().GetLinks().get(j);

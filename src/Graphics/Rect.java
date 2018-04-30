@@ -96,8 +96,8 @@ public class Rect extends Rectangle implements Serializable {
 		setY(rect.getY());
 		setWidth(rect.getWidth());
 		setHeight(rect.getHeight());
-		this.setArcWidth(ARC_WIDTH); 
-		this.setArcHeight(ARC_HEIGHT); 
+		this.setArcWidth(rect.getArcWidth()); 
+		this.setArcHeight(rect.getArcHeight()); 
 	}
 
 	/**

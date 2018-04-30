@@ -33,7 +33,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -52,7 +51,7 @@ public class Block implements DrawableObject, Serializable {
 	/***
 	 * Graphic properties (position, size).
 	 */
-	private Rect _rect;
+	private transient Rect _rect;
 	/***
 	 * Graphic properties of resizing box.
 	 */
@@ -579,9 +578,10 @@ public class Block implements DrawableObject, Serializable {
 		image.setX(_rect.getX());
 		image.setY(_rect.getY());
 
-		Rectangle clip = new Rectangle(image.getFitWidth(), image.getFitHeight());
-		clip.setX(_rect.getX());
-		clip.setY(_rect.getY());
+		
+		Rect clip = new Rect(_rect);
+		clip.setWidth(256);
+		clip.setHeight(256);
 		clip.setArcWidth(25);
 		clip.setArcHeight(25);
 		image.setClip(clip);

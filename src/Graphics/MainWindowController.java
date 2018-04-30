@@ -139,7 +139,7 @@ public class MainWindowController implements Initializable {
 	private void ShowCycleError(Link l2, int i) {
 		if (Block.isCycled(null, Panel.BlockList.get(i))) {
 			l2.SetCycled();
-			ShowError("Warning: Scheme contains cycle.",3000);
+			ShowError("Warning: Scheme contains cycle.", 3000);
 		} else {
 			Block.unsetCalculated(source.GetBlock());
 			Block.unsetCalculated(Panel.BlockList.get(i));
@@ -150,11 +150,13 @@ public class MainWindowController implements Initializable {
 
 	/**
 	 * Shows error in the right down corner.
-	 * @param log text that be shown.
-	 * @param timeLine	time in miliseconds. This shows how long it will show.
+	 * 
+	 * @param log
+	 *            text that be shown.
+	 * @param timeLine
+	 *            time in miliseconds. This shows how long it will show.
 	 */
-	private void ShowError(String log,int timeLine)
-	{
+	private void ShowError(String log, int timeLine) {
 		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(timeLine), ae -> _errorLog.setText("")));
 		timeline.play();
 		_errorLog.setText(log);
@@ -163,28 +165,24 @@ public class MainWindowController implements Initializable {
 	/**
 	 * Runs the calculculate recursively on all outblocks.
 	 */
-	private void Run()
-	{
+	private void Run() {
 		Block.stepCounter = Integer.MAX_VALUE;
 		int outBlockCount = 0;
 		for (int i = 0; i < Panel.BlockList.size(); i++) {
 			if (Panel.BlockList.get(i).getType() == EBlock.OUT)
 				outBlockCount++;
-				Block.compute(Panel.BlockList.get(i));
+			Block.compute(Panel.BlockList.get(i));
 		}
-		if(outBlockCount == 0)
-		{
-			ShowError("Error: You cannot run it there is not out port in schema.",3000);
+		if (outBlockCount == 0) {
+			ShowError("Error: You cannot run it there is not out port in schema.", 3000);
 		}
 	}
 
 	/**
 	 * Runs calculate step by step and shows debug
 	 */
-	private void Debug()
-	{
-		for (int i = 0; i < Panel.BlockList.size(); i++)
-		{
+	private void Debug() {
+		for (int i = 0; i < Panel.BlockList.size(); i++) {
 			Panel.BlockList.get(i).GetDebugText().setVisible(true);
 			ImageView image = Panel.BlockList.get(i).getImageView();
 			image.setEffect(null);
@@ -206,7 +204,7 @@ public class MainWindowController implements Initializable {
 	 * Initializes scene at the start of the application
 	 * 
 	 * @see javafx.fxml.Initializable#initialize(java.net.URL,
-	 * java.util.ResourceBundle)
+	 *      java.util.ResourceBundle)
 	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -270,20 +268,18 @@ public class MainWindowController implements Initializable {
 		_nextComponent.setOnAction(event -> {
 			Debug();
 		});
-		_exitDebugComponent.setOnAction(event->{
+		_exitDebugComponent.setOnAction(event -> {
 			IsDebug = false;
 			_nextComponent.setDisable(true);
 			_exitDebugComponent.setDisable(true);
 			_debugComponent.setDisable(false);
 			_runComponent.setDisable(false);
-			for (Block block: Panel.BlockList)
-			{
+			for (Block block : Panel.BlockList) {
 				block.GetDebugText().setVisible(false);
 				Block.unsetCalculated(block);
 			}
 
 		});
-
 
 		_openComponent.setOnAction(event -> {
 			FileChooser fileChooser = new FileChooser();
@@ -291,28 +287,36 @@ public class MainWindowController implements Initializable {
 			fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All-files", "*.*"),
 					new FileChooser.ExtensionFilter("Scheme", "*.ija"));
 			File file = fileChooser.showOpenDialog(Panel.getStage());
-			try {
-				LoadManager.loadScene(file);
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if (file != null) {
+				try {
+					LoadManager.loadScene(file);
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 
 		_saveComponent.setOnAction(event -> {
 			FileChooser fileChooser = new FileChooser();
 			fileChooser.setTitle("Save scheme");
-			fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Scheme", "*.ija"));
+			fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("IJA", "*.ija"));
 			File file = fileChooser.showSaveDialog(Panel.getStage());
+			
+			if(!file.getName().endsWith(".ija"))
+				file = new File(file.getParent(),file.getName()+".ija");
 
-			try {
-				LoadManager.saveScene(Panel.BlockList, file);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if (file != null) {
+
+				try {
+					LoadManager.saveScene(Panel.BlockList, file);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 

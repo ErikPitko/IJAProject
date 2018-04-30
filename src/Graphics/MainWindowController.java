@@ -40,7 +40,6 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
-import org.hamcrest.core.Is;
 
 /**
  * The MainWindow controller class.

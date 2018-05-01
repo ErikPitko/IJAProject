@@ -244,18 +244,6 @@ public class Block implements DrawableObject, Serializable {
 				if (Block.stepCounter == Panel.stepCounter) {
 					return value;
 				}
-//				else
-//				{
-//					if(MainWindowController.IsDebug) {
-//						System.out.println(Block.stepCounter + " QQ " + Panel.stepCounter);
-//						ImageView image = block.getImageView();
-//						ColorAdjust blackout = new ColorAdjust();
-//						blackout.setBrightness(-0.5);
-//						image.setEffect(blackout);
-//						image.setCache(true);
-//						image.setCacheHint(CacheHint.SPEED);
-//					}
-//				}
 				if (first) {
 					first = false;
 					block.setValue(value);
@@ -279,12 +267,9 @@ public class Block implements DrawableObject, Serializable {
 				}
 			}
 		}
-		if (Block.stepCounter == Panel.stepCounter) {
-		}
-		else
+		if (Block.stepCounter != Panel.stepCounter &&  block.getType() != EBlock.IN)
 		{
 			if(MainWindowController.IsDebug) {
-				System.out.println(Block.stepCounter + " QQ " + Panel.stepCounter);
 				ImageView image = block.getImageView();
 				ColorAdjust blackout = new ColorAdjust();
 				blackout.setBrightness(-0.5);

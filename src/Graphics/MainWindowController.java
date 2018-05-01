@@ -33,9 +33,11 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
@@ -185,6 +187,7 @@ public class MainWindowController implements Initializable {
 			Panel.BlockList.get(i).GetDebugText().setVisible(true);
 			ImageView image = Panel.BlockList.get(i).getImageView();
 			image.setEffect(null);
+			image.setEffect(new DropShadow(20, Color.BLACK));
 			image.setCache(true);
 			image.setCacheHint(CacheHint.SPEED);
 		}
@@ -257,6 +260,11 @@ public class MainWindowController implements Initializable {
 			Run();
 		});
 		_debugComponent.setOnAction(event -> {
+			for (Block b : Panel.BlockList) {
+				Block.unsetCalculated(b);
+			}
+//			Panel.stepCounter = 0;
+//			Block.stepCounter = 0;
 			IsDebug = true;
 			_nextComponent.setDisable(false);
 			_exitDebugComponent.setDisable(false);
@@ -273,6 +281,10 @@ public class MainWindowController implements Initializable {
 			_exitDebugComponent.setDisable(true);
 			_debugComponent.setDisable(false);
 			_runComponent.setDisable(false);
+			for (Block b : Panel.BlockList) {
+				b.getImageView().setEffect(null);
+				b.getImageView().setEffect(new DropShadow(20, Color.BLACK));
+			}
 			for (Block block : Panel.BlockList) {
 				if (block.getType() != EBlock.IN)
 					block.GetDebugText().setVisible(false);

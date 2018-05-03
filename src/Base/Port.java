@@ -132,6 +132,14 @@ public class Port implements DrawableObject, Serializable {
 	}
 
 	/**
+	 * Sets the default color of port.
+	 */
+	public void SetDefaultColor()
+	{
+		Rect.setFill(_backgroundColor);
+	}
+
+	/**
 	 * @see Graphics.DrawableObject#Draw(javafx.scene.layout.AnchorPane)
 	 */
 	@Override

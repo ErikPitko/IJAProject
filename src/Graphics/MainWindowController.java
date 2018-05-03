@@ -48,78 +48,126 @@ import javafx.util.Duration;
  */
 public class MainWindowController implements Initializable {
 
-	/** The anchor panel component. */
+	/**
+	 * The anchor panel component.
+	 */
 	@FXML
 	private AnchorPane _anchorPanelComponent;
 
-	/** The open menu-item component. */
+	/**
+	 * The open menu-item component.
+	 */
 	@FXML
 	private MenuItem _openComponent;
 
-	/** The save menu-item component. */
+	/**
+	 * The save menu-item component.
+	 */
 	@FXML
 	private MenuItem _saveComponent;
 
-	/** The exit menu-item component. */
+	/**
+	 * The exit menu-item component.
+	 */
 	@FXML
 	private MenuItem _exitComponent;
 
-	/** The about menu-item component. */
+	/**
+	 * The about menu-item component.
+	 */
 	@FXML
 	private MenuItem _aboutComponent;
 
-	/** The clear menu-item component. */
+	/**
+	 * The clear menu-item component.
+	 */
 	@FXML
 	private MenuItem _clearComponent;
 
-	/** The run menu-item component. */
+	/**
+	 * The run menu-item component.
+	 */
 	@FXML
 	private MenuItem _runComponent;
 
-	/** The debug menu-item component. */
+	/**
+	 * The debug menu-item component.
+	 */
 	@FXML
 	private MenuItem _debugComponent;
 
-	/** The next step debug menu-item component. */
+	/**
+	 * The next step debug menu-item component.
+	 */
 	@FXML
 	private MenuItem _nextComponent;
 
-	/** The exit debug menu-item component. */
+	/**
+	 * The clear run menu item component. Clears all blocks removes value calculated from it.
+	 */
+	@FXML
+	private MenuItem _clearRunComponent;
+
+	/**
+	 * The exit debug menu-item component.
+	 */
 	@FXML
 	private MenuItem _exitDebugComponent;
 
-	/** The error notification panel component. */
+	/**
+	 * The error notification panel component.
+	 */
 	@FXML
 	private Label _errorLog;
 
-	/** The Anchor panel. */
+	/**
+	 * The Anchor panel.
+	 */
 	public static AnchorPane AnchorPanel;
 
-	/** If debug is running. */
+	/**
+	 * If debug is running.
+	 */
 	public static boolean IsDebug;
 
-	/** The source port. */
+	/**
+	 * The source port.
+	 */
 	private Port source;
 
-	/** The is-in component flag. */
+	/**
+	 * The is-in component flag.
+	 */
 	private boolean isIn;
 
-	/** The start drag position. */
+	/**
+	 * The start drag position.
+	 */
 	private Point2D startDrag;
 
-	/** The block to be dragged. */
+	/**
+	 * The block to be dragged.
+	 */
 	private Block startDragBlock;
 
-	/** The block to be deleted. */
+	/**
+	 * The block to be deleted.
+	 */
 	private Block blDelete;
 
-	/** The background move flag. */
+	/**
+	 * The background move flag.
+	 */
 	private boolean isBackgroundMove;
 
-	/** The block to be resized. */
+	/**
+	 * The block to be resized.
+	 */
 	private Block resizeBlock;
 
-	/** The Constant contextMenu. */
+	/**
+	 * The Constant contextMenu.
+	 */
 	private static final ContextMenu contextMenu = new ContextMenu();
 
 	/**
@@ -132,10 +180,8 @@ public class MainWindowController implements Initializable {
 	/**
 	 * Checks link for loop and prints it in notification bar.
 	 *
-	 * @param l2
-	 *            the link to be checked
-	 * @param i
-	 *            the index of the block in loop
+	 * @param l2 the link to be checked
+	 * @param i  the index of the block in loop
 	 */
 	private void ShowCycleError(Link l2, int i) {
 		if (Block.isCycled(null, Panel.BlockList.get(i))) {
@@ -146,16 +192,17 @@ public class MainWindowController implements Initializable {
 			Block.unsetCalculated(Panel.BlockList.get(i));
 		}
 		l2.Draw(_anchorPanelComponent);
-		source = null;
+		if (source != null) {
+			source.SetDefaultColor();
+			source = null;
+		}
 	}
 
 	/**
 	 * Shows error in the right down corner.
-	 * 
-	 * @param log
-	 *            text that be shown.
-	 * @param timeLine
-	 *            time in miliseconds. This shows how long it will show.
+	 *
+	 * @param log      text that be shown.
+	 * @param timeLine time in miliseconds. This shows how long it will show.
 	 */
 	private void ShowError(String log, int timeLine) {
 		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(timeLine), ae -> _errorLog.setText("")));
@@ -175,14 +222,12 @@ public class MainWindowController implements Initializable {
 			Block.compute(Panel.BlockList.get(i));
 		}
 		if (outBlockCount == 0) {
-			ShowError("Error: You cannot run it there is not out port in schema.", 3000);
+			ShowError("Error: You cannot run it there is no out port in schema.", 3000);
 		}
 	}
 
-	/**
-	 * Runs calculate step by step and shows debug
-	 */
-	private void Debug() {
+	private void SetBlocksAsDebugged()
+	{
 		for (int i = 0; i < Panel.BlockList.size(); i++) {
 			Panel.BlockList.get(i).GetDebugText().setVisible(true);
 			ImageView image = Panel.BlockList.get(i).getImageView();
@@ -191,6 +236,24 @@ public class MainWindowController implements Initializable {
 			image.setCache(true);
 			image.setCacheHint(CacheHint.SPEED);
 		}
+	}
+
+	/**
+	 * Clears calculated value on block.
+	 */
+	private void ClearRun()
+	{
+		for (int i = 0; i < Panel.BlockList.size(); i++)
+		{
+			Block.unsetCalculated(Panel.BlockList.get(i));
+		}
+	}
+
+	/**
+	 * Runs calculate step by step and shows debug
+	 */
+	private void Debug() {
+		SetBlocksAsDebugged();
 		Block outBlock = null;
 		for (int i = 0; i < Panel.BlockList.size(); i++) {
 			if (Panel.BlockList.get(i).getType() == EBlock.OUT && Panel.BlockList.get(i).getValue() == 0)
@@ -260,17 +323,20 @@ public class MainWindowController implements Initializable {
 			Run();
 		});
 		_debugComponent.setOnAction(event -> {
-			for (Block b : Panel.BlockList) {
-				Block.unsetCalculated(b);
-			}
+			ClearRun();
 //			Panel.stepCounter = 0;
 //			Block.stepCounter = 0;
 			IsDebug = true;
 			_nextComponent.setDisable(false);
 			_exitDebugComponent.setDisable(false);
-			Debug();
+			//Debug();
+			SetBlocksAsDebugged();
 			_runComponent.setDisable(true);
 			_debugComponent.setDisable(true);
+			_clearRunComponent.setDisable(true);
+		});
+		_clearRunComponent.setOnAction(event -> {
+			ClearRun();
 		});
 		_nextComponent.setOnAction(event -> {
 			Debug();
@@ -281,6 +347,7 @@ public class MainWindowController implements Initializable {
 			_exitDebugComponent.setDisable(true);
 			_debugComponent.setDisable(false);
 			_runComponent.setDisable(false);
+			_clearRunComponent.setDisable(false);
 			for (Block b : Panel.BlockList) {
 				b.getImageView().setEffect(null);
 				b.getImageView().setEffect(new DropShadow(20, Color.BLACK));
@@ -340,8 +407,15 @@ public class MainWindowController implements Initializable {
 			alert.showAndWait();
 		});
 		_clearComponent.setOnAction(event -> {
-			Panel.ClearAllBlocks();
-
+			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+			alert.setTitle("Clear all");
+			alert.setHeaderText("Do you really want to clear scheme?");
+			Optional<ButtonType> result = alert.showAndWait();
+			if (result.get() == ButtonType.OK){
+				Panel.ClearAllBlocks();
+			} else {
+				// ... user chose CANCEL or closed the dialog
+			}
 		});
 
 		_exitComponent.setOnAction(event -> {
@@ -405,8 +479,12 @@ public class MainWindowController implements Initializable {
 											.getX() == ((Rectangle) arg0.getTarget()).getX()
 											&& Panel.BlockList.get(i).getInPorts().get(y).Rect
 													.getY() == ((Rectangle) arg0.getTarget()).getY()) {
-										source = Panel.BlockList.get(i).getInPorts().get(y);
-										isIn = true;
+										if(Panel.BlockList.get(i).getInPorts().get(y).GetLinks().size() == 0)
+										{
+											source = Panel.BlockList.get(i).getInPorts().get(y);
+											source.Rect.setFill(Color.YELLOW);
+											isIn = true;
+										}
 									}
 								}
 								if (source == null)
@@ -416,6 +494,7 @@ public class MainWindowController implements Initializable {
 												&& Panel.BlockList.get(i).GetOutPort().Rect
 														.getY() == ((Rectangle) arg0.getTarget()).getY()) {
 											source = Panel.BlockList.get(i).GetOutPort();
+											source.Rect.setFill(Color.YELLOW);
 											isIn = false;
 										}
 							}
@@ -429,18 +508,26 @@ public class MainWindowController implements Initializable {
 													.getY() == ((Rectangle) arg0.getTarget()).getY()
 											&& !isIn) {
 										if (source == Panel.BlockList.get(i).getInPorts().get(y)) {
-											System.out.println("Same Block");
-											source = null;
+											if(source != null) {
+												source.SetDefaultColor();
+												source = null;
+											}
 											break;
 										}
-										if (Panel.BlockList.get(i).getInPorts().get(y).GetLinks().size() > 0)
-											source = null;
-										else if (source.GetBlock() != Panel.BlockList.get(i).getInPorts().get(y)
+										if (Panel.BlockList.get(i).getInPorts().get(y).GetLinks().size() > 0) {
+											if(source != null) {
+												source.SetDefaultColor();
+												source = null;
+											}
+										}else if (source.GetBlock() != Panel.BlockList.get(i).getInPorts().get(y)
 												.GetBlock()) {
 											Link l2 = new Link(source, Panel.BlockList.get(i).getInPorts().get(y));
 											ShowCycleError(l2, i);
 										} else {
-											source = null;
+											if(source != null) {
+												source.SetDefaultColor();
+												source = null;
+											}
 											break;
 										}
 
@@ -453,20 +540,34 @@ public class MainWindowController implements Initializable {
 														.getY() == ((Rectangle) arg0.getTarget()).getY()
 												&& isIn) {
 											if (source.GetLinks().size() > 0)
-												source = null;
+											{
+												if(source != null) {
+													source.SetDefaultColor();
+													source = null;
+												}
+											}
 											else if (source.GetBlock() != Panel.BlockList.get(i).GetOutPort()
 													.GetBlock()) {
 												Link l2 = new Link(Panel.BlockList.get(i).GetOutPort(), source);
 												ShowCycleError(l2, i);
-											} else {
-												source = null;
+											} else
+												{
+													if(source != null) {
+														source.SetDefaultColor();
+														source = null;
+													}
 												break;
 											}
 										}
 							}
 						}
 					} else
-						source = null;
+						{
+							if(source != null) {
+								source.SetDefaultColor();
+								source = null;
+							}
+					}
 				} else if ((arg0.getTarget() instanceof Line)) {
 					if (arg0.getClickCount() == 2) {
 						for (int i = 0; i < Panel.BlockList.size(); i++) {
@@ -480,7 +581,10 @@ public class MainWindowController implements Initializable {
 						}
 					}
 				} else if (arg0.getTarget() instanceof ImageView) {
-					source = null;
+					if(source != null) {
+						source.SetDefaultColor();
+						source = null;
+					}
 				}
 			}
 		});
@@ -513,22 +617,19 @@ public class MainWindowController implements Initializable {
 			}
 		});
 		_anchorPanelComponent.setOnMouseDragged(event -> {
-			if (startDragBlock != null) {
+			if(startDrag!= null) {
 				double deltaX = -Point2D.Vector(new Point2D(event.getX(), event.getY()), startDrag).X;
 				double deltaY = -Point2D.Vector(new Point2D(event.getX(), event.getY()), startDrag).Y;
-				startDragBlock.Move(deltaX, deltaY);
-				startDrag = new Point2D((int) event.getX(), (int) event.getY());
-			} else if (isBackgroundMove) {
-				double deltaX = -Point2D.Vector(new Point2D(event.getX(), event.getY()), startDrag).X;
-				double deltaY = -Point2D.Vector(new Point2D(event.getX(), event.getY()), startDrag).Y;
-				for (Block blo : Panel.BlockList) {
-					blo.Move(deltaX, deltaY);
+				if (startDragBlock != null) {
+					startDragBlock.Move(deltaX, deltaY);
+				} else if (isBackgroundMove) {
+					for (Block blo : Panel.BlockList) {
+						blo.Move(deltaX, deltaY);
+					}
+
+				} else if (resizeBlock != null) {
+					resizeBlock.Resize(deltaX, deltaY);
 				}
-				startDrag = new Point2D((int) event.getX(), (int) event.getY());
-			} else if (resizeBlock != null) {
-				double deltaX = -Point2D.Vector(new Point2D(event.getX(), event.getY()), startDrag).X;
-				double deltaY = -Point2D.Vector(new Point2D(event.getX(), event.getY()), startDrag).Y;
-				resizeBlock.Resize(deltaX, deltaY);
 				startDrag = new Point2D((int) event.getX(), (int) event.getY());
 			}
 		});

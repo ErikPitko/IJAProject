@@ -160,7 +160,15 @@ public class BlockDialogContoller implements Initializable {
 				ValueLabel.setVisible(true);
 				InputSlider.setDisable(true);
 				InputSlider.setValue(0);
-			} else {
+			} else if (type == EBlock.OUT)
+			{
+				Value.setVisible(false);
+				ValueLabel.setVisible(false);
+				InputSlider.setDisable(true);
+				InputSlider.setValue(1);
+			}
+			else
+				{
 				Value.setVisible(false);
 				ValueLabel.setVisible(false);
 				InputSlider.setDisable(false);

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="compile" name="IJAProject">
+    <property environment="env"/>
+    <property name="junit.output.dir" value="junit"/>
+	<property name="doc.dir" location="doc"/>
+	<property name="source.dir" location="src"/>
+	<property name="build.dir" location="build"/>
+	<property name="jar.dir" location="dest-client"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.8"/>
+    <property name="source" value="1.8"/>
+    <path id="JUnit 4.libraryclasspath">
+        <pathelement location="lib/junit-4.12.jar"/>
+        <pathelement location="lib/hamcrest-core-1.3.jar"/>
+    </path>
+    <path id="IJAProject.classpath">
+        <pathelement location="out/production/Du2"/>
+        <path refid="JUnit 4.libraryclasspath"/>
+    </path>
+    <target name="init">
+    	<mkdir dir="${jar.dir}"/>
+        <mkdir dir="${build.dir}"/>
+    	<mkdir dir = "${doc.dir}"/>
+        <copy includeemptydirs="false" todir="build">
+            <fileset dir="src">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="build"/>
+        <delete dir="doc"/>
+        <delete dir="junit"/>
+        <delete dir="dest-client"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-project, doc" name="compile"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="${build.dir}" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="IJAProject.classpath"/>
+        </javac>
+    	<jar destfile="${jar.dir}/ija-client.jar" basedir = "${build.dir}" excludes="${build.dir}/Testing">
+			<manifest>
+				<attribute name="Main-Class" value="Graphics.Panel"/>
+			</manifest>
+		</jar>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
+    <target name="Panel">
+        <java classname="Graphics.Panel" failonerror="true" fork="yes">
+            <classpath refid="IJAProject.classpath"/>
+        </java>
+    </target>
+    <target name="JUnit">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="Testing.JUnit" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="IJAProject.classpath"/>
+        </junit>
+    </target>
+    <target name="junitreport">
+        <junitreport todir="${junit.output.dir}">
+            <fileset dir="${junit.output.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${junit.output.dir}"/>
+        </junitreport>
+    </target>
+	<target name="doc" depends="init">
+		<javadoc destdir="${doc.dir}" private="true">
+			<fileset dir = "${source.dir}/Base"/>
+			<fileset dir = "${source.dir}/Graphics"/>
+		</javadoc>
+	</target>
+	<target name="run" depends="compile">
+		<java jar = "${jar.dir}/ija-client.jar" fork="true"/>
+	</target>
+</project>

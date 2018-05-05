@@ -12,9 +12,6 @@
  ******************************************************************************/
 package Base;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +30,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
@@ -227,9 +223,9 @@ public class Block implements DrawableObject, Serializable {
 	}
 	
 	/***
-	 * Checks for the loops in scheme and if none are found calls compute()
+	 * Checks for the loops in scheme and if none are found calls {@link #compute(Block)}
 	 * 
-	 * @see compute()
+	 * @see #compute(Block)
 	 * 
 	 * @param block
 	 *            root block to be calculated
@@ -237,7 +233,6 @@ public class Block implements DrawableObject, Serializable {
 	 */
 	public static boolean Compute(Block block) {
 		if (isCycled(new ArrayList<Block>(), block)) {
-			System.err.println("CYCLE !");
 			return false;
 		}
 		compute(block);
@@ -305,9 +300,9 @@ public class Block implements DrawableObject, Serializable {
 	}
 	
 	/***
-	 * Checks for the loops in scheme and if none are found calls unsetCalculated()
+	 * Checks for the loops in scheme and if none are found calls {@link #unsetCalculated(Block)}
 	 * 
-	 * @see unsetCalculated()
+	 * @see #unsetCalculated(Block)
 	 * 
 	 * @param block
 	 *            changed block
@@ -315,7 +310,6 @@ public class Block implements DrawableObject, Serializable {
 	 */
 	public static boolean UnsetCalculated(Block block) {
 		if (isCycled(new ArrayList<Block>(), block)) {
-			System.err.println("CYCLE !");
 			return false;
 		}
 		unsetCalculated(block);
@@ -624,14 +618,8 @@ public class Block implements DrawableObject, Serializable {
 		image.setFitHeight(_rect.getHeight());
 		image.setFitWidth(_rect.getWidth());
 
-		Font font = null;
-		try {
-			font = Font.loadFont(new FileInputStream(new File("src/Res/fonts/Crasns.ttf")), 15);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		
 		debugDisp = new Text(String.valueOf(value));
-		// debugDisp.setFont(font);
 		debugDisp.setX(_rect.getX() + _rect.getWidth() - debugDisp.getBoundsInLocal().getWidth());
 		debugDisp.setY(_rect.getY() - 5);
 		debugDisp.setMouseTransparent(true);
@@ -640,7 +628,6 @@ public class Block implements DrawableObject, Serializable {
 		if (_eBlock == EBlock.OUT) {
 			disp = new Text(String.valueOf(value));
 			disp.setMouseTransparent(true);
-			disp.setFont(font);
 			disp.setX(_rect.Center().X - disp.getBoundsInLocal().getWidth() / 2);
 			disp.setY(_rect.Center().Y + 5);
 			disp.setTextAlignment(TextAlignment.CENTER);

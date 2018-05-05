@@ -36,6 +36,11 @@ public class Panel extends Application {
 
 	/** step counter used in debug mode, increments by one on space press */
 	public static int stepCounter;
+	
+	/**
+	 * If debug is running.
+	 */
+	public static boolean IsDebug;
 
 	/**
 	 * Gets the stage.

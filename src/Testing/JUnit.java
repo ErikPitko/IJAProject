@@ -24,6 +24,7 @@ public class JUnit
     
     @Before
     public void prepare() {
+    	Block.stepCounter = Integer.MAX_VALUE;
         point = new Point2D(5,5);
         myRect = new Rect(10,10,10,10);
         
@@ -51,65 +52,88 @@ public class JUnit
     
     @Test
 	public void Simple() {
-		Block.compute(blocks.get(2));
+		Block.Compute(blocks.get(2));
 		assertEquals(7, blocks.get(2).getValue(), 0);
 
 		blocks.get(2).setType(EBlock.SUB);
-		Block.compute(blocks.get(2));
+		Block.UnsetCalculated(blocks.get(2));
+		Block.stepCounter = Integer.MAX_VALUE;
+		Block.Compute(blocks.get(2));
 		assertEquals(3, blocks.get(2).getValue(), 0);
 		
 		blocks.get(2).setType(EBlock.MUL);
-		Block.compute(blocks.get(2));
+		Block.UnsetCalculated(blocks.get(2));
+		Block.stepCounter = Integer.MAX_VALUE;
+		Block.Compute(blocks.get(2));
 		assertEquals(10, blocks.get(2).getValue(), 0);
 		
 		blocks.get(2).setType(EBlock.DIV);
-		Block.compute(blocks.get(2));
+		Block.UnsetCalculated(blocks.get(2));
+		Block.stepCounter = Integer.MAX_VALUE;
+		Block.Compute(blocks.get(2));
 		assertEquals(5.0/2.0, blocks.get(2).getValue(), 0);
 	}
 	
 	@Test
 	public void TwoStageBlocks() {
 		Block thisBlock = blocks.get(3);
-		Block.compute(thisBlock);
+		Block.UnsetCalculated(thisBlock);
+		Block.stepCounter = Integer.MAX_VALUE;
+		Block.Compute(thisBlock);
 		assertEquals(5+7, thisBlock.getValue(), 0);
 		
 		thisBlock.setType(EBlock.SUB);
-		Block.compute(thisBlock);
+		Block.UnsetCalculated(thisBlock);
+		Block.stepCounter = Integer.MAX_VALUE;
+		Block.Compute(thisBlock);
 		assertEquals(5-7, thisBlock.getValue(), 0);
 
 		thisBlock.setType(EBlock.MUL);
-		Block.compute(thisBlock);
+		Block.UnsetCalculated(thisBlock);
+		Block.stepCounter = Integer.MAX_VALUE;
+		Block.Compute(thisBlock);
 		assertEquals(5*7, thisBlock.getValue(), 0);
 		
 		thisBlock.setType(EBlock.DIV);
-		Block.compute(thisBlock);
+		Block.UnsetCalculated(thisBlock);
+		Block.stepCounter = Integer.MAX_VALUE;
+		Block.Compute(thisBlock);
 		assertEquals(5.0/7.0, thisBlock.getValue(), 0);
 		
 		
 //		Zacyklenie
-//		blocks.get(2).genInPort();
-//		blocks.get(2).getInPorts().get(2).setLink(new Link(blocks.get(blocks.size() - 1).getOutPorts().get(0)));
-//		Block.compute(blocks.get(blocks.size() - 1));
+		blocks.get(2).genInPort();
+		int size = blocks.get(2).getInPorts().size();
 		
+		new Link(blocks.get(2).getInPorts().get(size - 1), blocks.get(2).GetOutPort());
+		assertEquals(Block.Compute(blocks.get(blocks.size() - 1)), false);
+		
+		blocks.get(2).getInPorts().get(size - 1).unSetLink();
 		
 	}
 
 	@Test
 	public void ThreeStageBlocks() {
 		Block thisBlock = blocks.get(4);
-		Block.compute(thisBlock);
+		Block.Compute(thisBlock);
 		assertEquals(12+7+2, thisBlock.getValue(), 0);
 		
 		thisBlock.setType(EBlock.SUB);
-		Block.compute(thisBlock);
+		Block.UnsetCalculated(thisBlock);
+		Block.stepCounter = Integer.MAX_VALUE;
+		Block.Compute(thisBlock);
 		assertEquals(12-7-2, thisBlock.getValue(), 0);
 		
 		thisBlock.setType(EBlock.MUL);
-		Block.compute(thisBlock);
+		Block.UnsetCalculated(thisBlock);
+		Block.stepCounter = Integer.MAX_VALUE;
+		Block.Compute(thisBlock);
 		assertEquals(12 * 7 * 2, thisBlock.getValue(), 0);
 		
 		thisBlock.setType(EBlock.DIV);
-		Block.compute(thisBlock);
+		Block.UnsetCalculated(thisBlock);
+		Block.stepCounter = Integer.MAX_VALUE;
+		Block.Compute(thisBlock);
 		assertEquals((5.0+5.0+2.0)/(7.0)/2.0, thisBlock.getValue(), 0);
 		
 	}
@@ -144,7 +168,8 @@ public class JUnit
 			blocks.get(j/2).getInPorts().get(((j-1)%2==0) ? 0:1).setLink(previousLink);
 			blocks.get(j).GetOutPort().setLink(previousLink);
 		}
-		Block.compute(blocks.get(1));
+		Block.stepCounter = Integer.MAX_VALUE;
+		Block.Compute(blocks.get(1));
 		assertEquals(expectedValue, blocks.get(1).getValue(), 0.000000001);
 	}
     

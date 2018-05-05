@@ -15,6 +15,7 @@ package Graphics;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -125,10 +126,6 @@ public class MainWindowController implements Initializable {
 	 */
 	public static AnchorPane AnchorPanel;
 
-	/**
-	 * If debug is running.
-	 */
-	public static boolean IsDebug;
 
 	/**
 	 * The source port.
@@ -168,7 +165,7 @@ public class MainWindowController implements Initializable {
 	/**
 	 * The Constant contextMenu.
 	 */
-	private static final ContextMenu contextMenu = new ContextMenu();
+	private static ContextMenu contextMenu;
 
 	/**
 	 * Closes Block dialog before closing main window
@@ -184,12 +181,12 @@ public class MainWindowController implements Initializable {
 	 * @param i  the index of the block in loop
 	 */
 	private void ShowCycleError(Link l2, int i) {
-		if (Block.isCycled(null, Panel.BlockList.get(i))) {
+		if (Block.isCycled(new ArrayList<Block>(), Panel.BlockList.get(i))) {
 			l2.SetCycled();
 			ShowError("Warning: Scheme contains cycle.", 3000);
 		} else {
-			Block.unsetCalculated(source.GetBlock());
-			Block.unsetCalculated(Panel.BlockList.get(i));
+			Block.UnsetCalculated(source.GetBlock());
+			Block.UnsetCalculated(Panel.BlockList.get(i));
 		}
 		l2.Draw(_anchorPanelComponent);
 		if (source != null) {
@@ -202,7 +199,7 @@ public class MainWindowController implements Initializable {
 	 * Shows error in the right down corner.
 	 *
 	 * @param log      text that be shown.
-	 * @param timeLine time in miliseconds. This shows how long it will show.
+	 * @param timeLine time in milliseconds. This shows how long it will show.
 	 */
 	private void ShowError(String log, int timeLine) {
 		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(timeLine), ae -> _errorLog.setText("")));
@@ -211,7 +208,7 @@ public class MainWindowController implements Initializable {
 	}
 
 	/**
-	 * Runs the calculculate recursively on all outblocks.
+	 * Runs the calculation recursively on all display blocks.
 	 */
 	private void Run() {
 		Block.stepCounter = Integer.MAX_VALUE;
@@ -219,7 +216,7 @@ public class MainWindowController implements Initializable {
 		for (int i = 0; i < Panel.BlockList.size(); i++) {
 			if (Panel.BlockList.get(i).getType() == EBlock.OUT)
 				outBlockCount++;
-			Block.compute(Panel.BlockList.get(i));
+			Block.Compute(Panel.BlockList.get(i));
 		}
 		if (outBlockCount == 0) {
 			ShowError("Error: You cannot run it there is no out port in schema.", 3000);
@@ -245,7 +242,7 @@ public class MainWindowController implements Initializable {
 	{
 		for (int i = 0; i < Panel.BlockList.size(); i++)
 		{
-			Block.unsetCalculated(Panel.BlockList.get(i));
+			Block.UnsetCalculated(Panel.BlockList.get(i));
 		}
 	}
 
@@ -261,7 +258,7 @@ public class MainWindowController implements Initializable {
 		}
 		if (outBlock != null) {
 			Panel.stepCounter++;
-			Block.compute(outBlock);
+			Block.Compute(outBlock);
 		}
 	}
 
@@ -273,6 +270,7 @@ public class MainWindowController implements Initializable {
 	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		contextMenu = new ContextMenu();
 		AnchorPanel = _anchorPanelComponent;
 		Block bl = new Block(EBlock.ADD, new Rect(100, 100, 200, 200));
 		bl.genInPort();
@@ -326,7 +324,7 @@ public class MainWindowController implements Initializable {
 			ClearRun();
 //			Panel.stepCounter = 0;
 //			Block.stepCounter = 0;
-			IsDebug = true;
+			Panel.IsDebug = true;
 			_nextComponent.setDisable(false);
 			_exitDebugComponent.setDisable(false);
 			//Debug();
@@ -342,7 +340,7 @@ public class MainWindowController implements Initializable {
 			Debug();
 		});
 		_exitDebugComponent.setOnAction(event -> {
-			IsDebug = false;
+			Panel.IsDebug = false;
 			_nextComponent.setDisable(true);
 			_exitDebugComponent.setDisable(true);
 			_debugComponent.setDisable(false);
@@ -355,7 +353,7 @@ public class MainWindowController implements Initializable {
 			for (Block block : Panel.BlockList) {
 				if (block.getType() != EBlock.IN)
 					block.GetDebugText().setVisible(false);
-				Block.unsetCalculated(block);
+				Block.UnsetCalculated(block);
 			}
 
 		});

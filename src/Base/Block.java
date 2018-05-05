@@ -189,35 +189,59 @@ public class Block implements DrawableObject, Serializable {
 	}
 
 	/**
-	 * Recursive searching for loops.
+	 * Backward recursive searching for loops.
+	 * 
+	 * Builds list of blocks it goes through and searches for two identical blocks.
+	 * Goes in a reverse direction, searches on all input ports.
 	 *
-	 * @param comparing
-	 *            Always left null
+	 * @param newBList Empty list of blocks.
 	 * @param block
-	 *            Block to be checked for loop in tree
+	 *            Root block from which to start loop search
 	 * @return true if loop is found
 	 */
-	public static boolean isCycled(Block comparing, Block block) {
+	public static boolean isCycled(List<Block> newBList, Block block){
 		boolean found = false;
-
-		if (comparing == null) {
-			comparing = block;
-		} else {
-			if (comparing == block)
-				return true;
-		}
+		
+		if (newBList == null)
+			newBList = new ArrayList<Block>();
+		
 		if (block == null)
 			return found;
+		
+		for (Block b : newBList) {
+			if (b == block)
+				return true;
+		}
 
 		for (Port port : block.getInPorts()) {
 			Link frontLink = port.GetFirstLink();
 			if (frontLink != null) {
-				found = isCycled(comparing, frontLink.getInPort().GetBlock());
+				newBList.add(block);
+				if (frontLink.getInPort() != null)
+					found = isCycled(new ArrayList<Block>(newBList), frontLink.getInPort().GetBlock());
 				if (found)
 					break;
 			}
 		}
 		return found;
+	}
+	
+	/***
+	 * Checks for the loops in scheme and if none are found calls compute()
+	 * 
+	 * @see compute()
+	 * 
+	 * @param block
+	 *            root block to be calculated
+	 * @return true, if no loop found
+	 */
+	public static boolean Compute(Block block) {
+		if (isCycled(new ArrayList<Block>(), block)) {
+			System.err.println("CYCLE !");
+			return false;
+		}
+		compute(block);
+		return true;
 	}
 
 	/***
@@ -229,11 +253,7 @@ public class Block implements DrawableObject, Serializable {
 	 *            root block to be calculated
 	 * @return value of given root block
 	 */
-	public static double compute(Block block) {
-		if (isCycled(null, block)) {
-			System.err.println("CYCLE !");
-			return 0;
-		}
+	private static double compute(Block block) {
 		boolean first = true;
 		if (block.calculated)
 			return block.value;
@@ -269,7 +289,7 @@ public class Block implements DrawableObject, Serializable {
 		}
 		if (Block.stepCounter != Panel.stepCounter &&  block.getType() != EBlock.IN)
 		{
-			if(MainWindowController.IsDebug) {
+			if(Panel.IsDebug) {
 				ImageView image = block.getImageView();
 				ColorAdjust blackout = new ColorAdjust();
 				blackout.setBrightness(-0.5);
@@ -283,6 +303,24 @@ public class Block implements DrawableObject, Serializable {
 		block.calculated = true;
 		return block.value;
 	}
+	
+	/***
+	 * Checks for the loops in scheme and if none are found calls unsetCalculated()
+	 * 
+	 * @see unsetCalculated()
+	 * 
+	 * @param block
+	 *            changed block
+	 * @return true, if no loop found
+	 */
+	public static boolean UnsetCalculated(Block block) {
+		if (isCycled(new ArrayList<Block>(), block)) {
+			System.err.println("CYCLE !");
+			return false;
+		}
+		unsetCalculated(block);
+		return true;
+	}
 
 	/***
 	 * Set blocks to be recalculated after a change in links or blocks.
@@ -293,7 +331,7 @@ public class Block implements DrawableObject, Serializable {
 	 * @param block
 	 *            changed block
 	 */
-	public static void unsetCalculated(Block block) {
+	private static void unsetCalculated(Block block) {
 		if (block == null)
 			return;
 		if (block.getType() == EBlock.IN)

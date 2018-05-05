@@ -112,7 +112,7 @@ public class Link implements DrawableObject, Serializable {
 	 */
 	public void setInPort(Port inPort) {
 		if (this.outPort != null && inPort != null)
-			Block.unsetCalculated(outPort.GetBlock());
+			Block.UnsetCalculated(outPort.GetBlock());
 		this.inPort = inPort;
 		if (inPort != null)
 			inPort.setLink(this);
@@ -135,7 +135,7 @@ public class Link implements DrawableObject, Serializable {
 	 */
 	public void setOutPort(Port outPort) {
 		if (this.outPort != null && outPort != null)
-			Block.unsetCalculated(outPort.GetBlock());
+			Block.UnsetCalculated(outPort.GetBlock());
 		this.outPort = outPort;
 		if (outPort != null)
 			outPort.setLink(this);

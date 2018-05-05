@@ -82,15 +82,18 @@ public class Port implements DrawableObject, Serializable {
 		for (int i = 0; i < _link.size();) {
 			Link middle = _link.get(i);
 			if (middle.getOutPort() != null)
-				Block.unsetCalculated(middle.getOutPort().GetBlock());
+				Block.UnsetCalculated(middle.getOutPort().GetBlock());
 			Port in = middle.getOutPort();
 			if (in != null) {
 				in.GetLinks().remove(middle);
 			}
 			this._link.remove(middle);
-			MainWindowController.AnchorPanel.getChildren().remove(middle.valuePopupBg);
-			MainWindowController.AnchorPanel.getChildren().remove(middle.valuePopupTxt);
-			MainWindowController.AnchorPanel.getChildren().remove(middle.getLine());
+			if (MainWindowController.AnchorPanel != null)
+			{
+				MainWindowController.AnchorPanel.getChildren().remove(middle.valuePopupBg);
+				MainWindowController.AnchorPanel.getChildren().remove(middle.valuePopupTxt);
+				MainWindowController.AnchorPanel.getChildren().remove(middle.getLine());
+			}
 			middle.Remove();
 		}
 	}

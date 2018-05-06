@@ -18,6 +18,7 @@ import java.util.List;
 
 import Graphics.DrawableObject;
 import Graphics.Point2D;
+import Graphics.Rect;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -51,10 +52,10 @@ public class Link implements DrawableObject, Serializable {
 	private static List<Line> cycledLinks = new ArrayList<>();
 
 	/** The background of value displayed on mouse interaction */
-	public Rectangle valuePopupBg;
+	public Rect valuePopupBg;
 
 	/** The text in popup displayed on mouse interaction */
-	public Text valuePopupTxt;
+	public transient Text valuePopupTxt;
 
 	/**
 	 * Instantiates a new link.
@@ -212,9 +213,7 @@ public class Link implements DrawableObject, Serializable {
 				line.setStroke(Color.BLACK);
 			line.setStrokeWidth(3);
 			line.setOnMouseEntered(event -> {
-				valuePopupBg = new Rectangle();
-				valuePopupBg.setX(event.getX() + 1);
-				valuePopupBg.setY(event.getY() + 1);
+				valuePopupBg = new Rect(event.getX() + 1,event.getY() + 1,0,0);
 				valuePopupTxt = new Text();
 				valuePopupTxt.setText(String.valueOf(inPort.GetBlock().getValue()));
 				valuePopupTxt.setFill(Color.BLACK);

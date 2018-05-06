@@ -130,6 +130,8 @@ public class LoadManager {
 			int linkSize = currBlock.GetOutPort().GetLinks().size();
 			for (int j = 0; j < linkSize; j++) {
 				Link currLink = currBlock.GetOutPort().GetLinks().get(j);
+				if(currLink.getOutPort() == null)
+					continue;
 				int idxOutBlock = findBlockIndex(sBlockList, currLink.getOutPort().GetBlock());
 				int idxInPort = findInPortIndex(sBlockList.get(idxOutBlock).getBlock().getInPorts(), currBlock);
 
